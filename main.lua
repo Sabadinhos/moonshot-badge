@@ -646,10 +646,19 @@ local function showRanks(broadcast)
     end
   end
   table.sort(scores, function(a, b) return a.score > b.score end)
+  local shown, you
+  shown = {}
+  for i, r in ipairs(scores) do
+    r.rank = i
+    if r.name == "YOU" then you = r
+    elseif #shown < RANKS - 1 then shown[#shown + 1] = r end
+  end
+  shown[#shown + 1] = you
+  table.sort(shown, function(a, b) return a.rank < b.rank end)
   local items = {}
   for i = 1, RANKS do
-    local r = scores[i]
-    items[i] = r and {title = i .. ".  " .. r.name, right = r.score .. " m"} or {title = i .. ".  ---", right = ""}
+    local r = shown[i]
+    items[i] = r and {title = r.rank .. ".  " .. r.name, right = r.score .. " m"} or {title = i .. ".  ---", right = ""}
   end
   cvMenu:show(false); cvPlay:show(false)
   rankList = ui.list(20, 8, 280, 184, items)

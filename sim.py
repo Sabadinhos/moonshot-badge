@@ -86,6 +86,11 @@ assert store.get("peers")["7K2Q9M"] is None
 G.on_key("up", False); assert state() == "ranks", state()
 assert any(i.get("title", "").endswith("@friend") for x in log if x[0] == "list" for i in x[1])
 print("rank list:", [x for x in log if x[0] == "list"][-1])
+for i in range(5):
+    G.on_mesh("PEER" + str(i), L.table(kind="moonshot-score", value=900 + i))
+items = [x for x in log if x[0] == "list"][-1][1]
+assert len(items) == 5 and any("YOU" in item["title"] for item in items)
+assert any("7.  YOU" == item["title"] for item in items), items
 G.on_key("back", False); assert state() == "title"
 print("OK")
 
