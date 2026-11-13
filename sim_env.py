@@ -73,7 +73,8 @@ def load(seed=None):
     G.badge = L.table(owner=lambda: "@tester", id=lambda: "7K2Q9M")
     G.mesh = L.table(send=lambda to, msg: log.append(("mesh", to, msg["value"])),
                      nearby=lambda: L.table_from([L.table(id="FRIEND1", name="@friend", level=42)]))
-    G.sys = L.table(keys=lambda: L.table(select=keys["select"]), millis=lambda: 0)
+    G.sys = L.table(keys=lambda: L.table(select=keys["select"]), millis=lambda: 0,
+                    exit=lambda: log.append(("exit",)))
 
     def award(amount, reason, cb):
         awards.append((amount, reason))

@@ -19,7 +19,7 @@ The app requests 1 !LAMP for a run of at least 600 m, or 3 !LAMPs for at least 1
 ## Release and test
 
 - `main.lua` and `app.json` are the upload package. The tested ZIP is produced locally under `dist/`; the GitHub repository also includes test and art sources, so do not upload the entire repository.
-- Local Lua simulation covers menu controls, intro/ready input safety on the first and later kicks, three-kick play, persistence, results, reward callback and mesh message validation; the physics sweep and source-art/package checks passed for v0.5.2.
+- Local Lua simulation covers menu controls, protected kick input, pause/resume and quit confirmation, three-kick play, persistence, results, reward callback and mesh message validation; the physics sweep and source-art/package checks passed for v0.5.3.
 - **Not yet verified on the physical badge.** Before App Store publication, run the ZIP via the submission page's emulator / USB **Run on badge**; test rendering, memory, input, two-badge mesh exchange and the interaction between mesh radio and Wi-Fi. A sign-in and linked X account are required to publish.
 - Publishing without an award cap is possible. Once a cap exists, subsequent code/file/permission changes require organiser approval. Ask DevRel for the cap separately after the gameplay and reward policy are validated.
 

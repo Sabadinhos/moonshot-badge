@@ -489,6 +489,25 @@ local lblBest  = ui.label(0, 34, "", {size = 12, color = "dim", w = ui.W, align 
 local playBg   = ui.rect(74, 175, 172, 28, {color = 0x48AE94, radius = 6})
 local lblPlay  = ui.label(0, 178, "", {size = 20, color = 0xFFFFFF, w = ui.W, align = "center"})
 local lblPop   = ui.label(0, 20, "", {size = 32, color = "green", w = ui.W, align = "center"})
+-- A two-colour 140 ms sweep keeps scene changes lively without delaying input.
+local sweep = ui.rect(-8, 0, 4, ui.H, {color = 0x9945FF})
+local sweepEdge = ui.rect(-4, 0, 2, ui.H, {color = 0x14F195})
+sweep:show(false); sweepEdge:show(false)
+local modalBg = ui.rect(36, 64, 248, 94, {color = 0x1A2030, radius = 9})
+local modalAccent = ui.rect(52, 66, 216, 2, {color = 0x14F195})
+local modalTitle = ui.label(36, 82, "", {size = 20, color = 0xF4F0FF, w = 248, align = "center"})
+local modalHelp = ui.label(36, 120, "", {size = 12, color = 0xBEA9FF, w = 248, align = "center"})
+local function showModal(visible)
+  modalBg:show(visible); modalAccent:show(visible)
+  modalTitle:show(visible); modalHelp:show(visible)
+end
+showModal(false)
+local sweepT, modalT = 0, 0
+local function swipe()
+  sweepT = 0.14
+  sweep:pos(-8, 0); sweepEdge:pos(-4, 0)
+  sweep:show(true); sweepEdge:show(true)
+end
 local bar, rankList = nil, nil
 local popTimer, popY = 0, 20
 
@@ -545,6 +564,30 @@ end
 local function shareBest(to)
   if mesh and mesh.send then mesh.send(to or "*", {kind = "moonshot-score", value = best}) end
 end
+local function modal(mode, from)
+  S.mode = mode
+  S.quitFrom = from
+  modalT = 0
+  sweepT = 0; sweep:show(false); sweepEdge:show(false)
+  modalTitle:text(mode == "pause" and "PAUSED" or "QUIT GAME?")
+  modalHelp:text(mode == "pause" and "SELECT RESUME   v MENU   > QUIT" or "SELECT STAY   RIGHT EXIT")
+  showModal(true)
+  ui.hint(mode == "pause" and "CANCEL resume" or "CANCEL stay")
+end
+local function resumeGame()
+  showModal(false)
+  S.mode = S.pausedMode
+  S.pausedMode = nil
+  if S.mode == "drop" then
+    -- A SELECT press to resume must never release a half-charged swing.
+    S.mode = "ready"; S.readyT = 0
+    S.token.y = -8; S.charging = false; S.power = 0
+    if bar then bar:set(0) end
+    led.off()
+    setMsg("GET READY", nil, 500, "green")
+    ui.hint("release SELECT to start")
+  end
+end
 
 local function finishFirstStage()
   if S.swing == 1 and not stage1Done then
@@ -600,6 +643,7 @@ local function clearResults()
 end
 
 local function newRun()
+  showModal(false)
   closeRanks()
   clearResults()
   S.mode = "title"
@@ -628,6 +672,7 @@ local function newRun()
   ui.hint("UP/DN map   <> hero   SELECT play")
   if bar then bar:remove(); bar = nil end
   led.off()
+  swipe()
 end
 
 local function showRanks(broadcast)
@@ -663,7 +708,7 @@ local function showRanks(broadcast)
   cvMenu:show(false); cvPlay:show(false)
   rankList = ui.list(20, 8, 280, 184, items)
   ui.hint("You + met badges running this app   CANCEL")
-  if broadcast ~= false then shareBest() end
+  if broadcast ~= false then swipe(); shareBest() end
 end
 
 local function startSwing()
@@ -700,6 +745,7 @@ local function startSwing()
   bar:set(0)
   ui.hint("release SELECT to start")
   led.off()
+  swipe()
 end
 
 local function addRank(score)
@@ -716,6 +762,7 @@ end
 
 local function endRun()
   S.mode = "end"
+  swipe()
   useCanvas(false)
   local total = fl(S.total)
   local isBest = total > best
@@ -972,6 +1019,20 @@ end
 ------------------------------------------------------------------ loop
 function on_tick(ms)
   local dt = math.min(ms, 80) / 1000
+  if sweepT > 0 then
+    sweepT = math.max(0, sweepT - dt)
+    local x = fl(-8 + (ui.W + 16) * (1 - sweepT / 0.14))
+    sweep:pos(x, 0); sweepEdge:pos(x + 4, 0)
+    if sweepT == 0 then sweep:show(false); sweepEdge:show(false) end
+  end
+  if S.mode == "pause" or S.mode == "quit" then
+    -- Keep physics, scoring, charge, confetti and the scene itself frozen.
+    modalT = math.min(0.14, modalT + dt)
+    local y = fl(64 - 10 * (1 - modalT / 0.14))
+    modalBg:pos(36, y); modalAccent:pos(52, y + 2)
+    modalTitle:pos(36, y + 18); modalHelp:pos(36, y + 56)
+    return
+  end
   if S.mode == "title" or S.mode == "end" then
     shareT = shareT + dt
     if shareT >= 12 then shareT = 0; shareBest() end
@@ -1028,9 +1089,25 @@ end
 
 function on_key(k, rep)
   if rep then return true end
+  if S.mode == "quit" then
+    if k == "right" then sys.exit()
+    elseif k == "back" or k == "select" then
+      showModal(false)
+      if S.quitFrom == "pause" then modal("pause", "pause")
+      else S.mode = "title"; ui.hint("UP/DN map   <> hero   SELECT play") end
+    end
+    return true
+  end
+  if S.mode == "pause" then
+    if k == "select" or k == "back" then resumeGame()
+    elseif k == "down" then newRun(); draw()
+    elseif k == "right" then modal("quit", "pause") end
+    return true
+  end
   if k == "back" then
-    if S.mode == "title" then return false end
-    newRun(); draw()
+    if S.mode == "title" then modal("quit", "title")
+    elseif S.mode == "end" or S.mode == "ranks" then newRun(); draw()
+    else S.pausedMode = S.mode; modal("pause", "pause") end
     return true
   end
   if S.mode == "title" then

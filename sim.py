@@ -67,7 +67,8 @@ assert store.get("stage1Done") is True, "Sabadinhos skin should unlock after sta
 G.on_key("back", False); assert state() == "title"
 G.on_key("right", False); assert store.get("skin") == 10, "Sabadinhos should be selectable after stage 1"
 G.on_key("select", False); assert state() == "intro", "unlocked skin should launch immediately"
-G.on_key("back", False); assert state() == "title"
+G.on_key("back", False); assert state() == "pause"
+G.on_key("down", False); assert state() == "title"
 print("swings (mode, secs, total):", results)
 print("final mode:", state(), "total:", round(G._S.total), "best:", store.get("best"), "awards:", awards)
 print("hints/toasts:", [x for x in log if x[0] != "label"][-4:])
@@ -82,7 +83,8 @@ assert G._S.celebrate > 0, "end scene confetti must begin"
 assert any(x[0] == "label" and "KICK 1" in x[1] for x in log), "end scene must show individual kicks"
 tick(100); assert G._S.celebrate == 0, "confetti must stop instead of burning CPU"
 G.on_key("select", False); assert state() == "intro" and len(G._S.shots) == 0, "replay must reset kick stats"
-G.on_key("back", False); assert state() == "title"
+G.on_key("back", False); assert state() == "pause"
+G.on_key("down", False); assert state() == "title"
 G.on_key("select", False); assert state() == "intro"
 [play_swing(43) for _ in range(3)]
 assert state() == "end"
