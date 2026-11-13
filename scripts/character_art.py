@@ -1,4 +1,4 @@
-"""Original Moon Shot sprite source. Run to regenerate both preview sheets.
+"""Original SOL TO THE MOON sprite source. Run to regenerate both preview sheets.
 
 Each 16x18 character shares a soft Solana-inspired palette and a 12px-ish
 head/body rhythm. No perimeter outline: silhouettes are defined by color masses.

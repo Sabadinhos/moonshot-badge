@@ -1,4 +1,4 @@
--- Moon Shot: hit the falling token to the moon.
+-- SOL TO THE MOON: pump the falling SOL coin across London.
 -- Solana OS Lua app (BP26 badge). One button, two timings:
 --   hold SELECT to charge power, release when the token reaches the bat.
 -- 3 swings per run, one per stage (Intelligence Summit, Scale or Die, Breakpoint).
@@ -554,7 +554,7 @@ local function playerName()
   return o or "you"
 end
 local function shareBest(to)
-  if mesh and mesh.send then mesh.send(to or "*", {kind = "moonshot-score", value = best}) end
+  if mesh and mesh.send then mesh.send(to or "*", {kind = "stm-score", value = best}) end
 end
 local function modal(mode, from)
   S.mode = mode
@@ -803,7 +803,7 @@ local function endRun()
       ledger.used = ledger.used + amount -- reserve before the async callback
       storage.set("lampDay", ledger)
     end
-    lamps.award(amount, "moon shot " .. total .. " m", function(ok, r)
+    lamps.award(amount, "sol to the moon " .. total .. " m", function(ok, r)
       if day then
         local current = storage.get("lampDay") or {}
         if current.day == day then
@@ -1172,7 +1172,7 @@ end
 
 function on_mesh(from, msg)
   if type(from) ~= "string" or #from < 4 or #from > 16 or not from:match("^[%w]+$") then return end
-  if type(msg) ~= "table" or msg.kind ~= "moonshot-score" then return end
+  if type(msg) ~= "table" or msg.kind ~= "stm-score" then return end
   local score = msg.value
   if type(score) ~= "number" or score ~= math.floor(score) or score < 0 or score > 50000 then return end
   if badge and badge.id and from == badge.id() then return end
