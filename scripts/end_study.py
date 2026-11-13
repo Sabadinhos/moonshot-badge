@@ -8,7 +8,7 @@ def font(n,b=False):return ImageFont.truetype(BOLD if b else FONT,n)
 def center(d,text,y,size,color,x=0,w=320,b=False):
  f=font(size,b);tw=d.textbbox((0,0),text,font=f)[2]
  d.text((x+(w-tw)//2,y),text,font=f,fill=color)
-colors={'.':None,'y':'#DABE86','k':'#272337','e':'#31CFA7','b':'#9B6AEA','w':'#FFF9DA'}
+colors={'.':None,'y':'#7A53D1','k':'#39266E','e':'#14F195','b':'#36C99F','w':'#BEA9FF'}
 out=Image.new('RGB',(640,218))
 for theme in range(2):
  bg='#F7F6F3' if theme==0 else '#14151E';ink='#262530' if theme==0 else '#F4F1F8';muted='#666472' if theme==0 else '#B1A9C0';purple='#6744A5' if theme==0 else '#BCA3F7'

@@ -16,11 +16,10 @@ local BOUNCE        = 0.45
 local FRICTION      = 0.70
 local DROP_SPEED    = 34     -- canvas px/s token fall
 local CHARGE_MS     = 1100   -- 0 -> 100 -> 0 cycle half
-local SCALE         = 4      -- canvas 80x54 -> 320x216
-local CW, CH        = 80, 54
-local GROUND        = 44     -- canvas y of ground line
-local BAT_X         = 14     -- canvas x of the bat (world x 0)
-local HIT_Y         = 33     -- token center y for a perfect hit
+local CW, CH        = 106, 72 -- gameplay at 3x; menu/results stay 80x54 at 4x
+local GROUND        = 58
+local BAT_X         = 18
+local HIT_Y         = 47
 local OK_BAND       = 7      -- +- px still a hit
 local RANKS         = 5
 
@@ -257,7 +256,8 @@ end
 ------------------------------------------------------------------ art
 local P = {palette = {d = 0x2A2A3A, s = 0x6B6B80, h = 0xFFF7B0, c = 0x3B2F70, e = 0x14F195, n = 0x0D0D14, r = 0xC8102E, t = 0x8A7A5A, g = 0x64D99A, w = 0xF5F1E8, p = 0xE9A8D4, b = 0x6938EF, k = 0x15121D, y = 0xD7A84B}}
 
--- Gold-rim SOL coin with three separate Solana bands, two shimmer frames.
+-- SOL coin: purple rim and green mark only, in two shimmer frames.
+local COIN_P = {palette = {y = 0x7A53D1, k = 0x39266E, e = 0x14F195, b = 0x36C99F, w = 0xBEA9FF}}
 local TOKEN_A = {"....yy....", "..ywkkyy..", ".ykeeeeky.", ".ykkkkkky.", "ykbbbbbbky", "ykkkkkkkky", ".ykeeeeey.", ".ykkkkkky.", "..yykkwy..", "....yy...."}
 local TOKEN_B = {"....yy....", "..yykkwy..", ".ykeeeeky.", ".ykkkkkky.", "ykbbbbbbky", "ykkkkkkkky", ".ykeeeeey.", ".ykkkkkky.", "..ywkkyy..", "....yy...."}
 
@@ -278,19 +278,19 @@ local RAMP = {".....e", "...eee", ".eeeee"}
 local BACK = {
   { -- WESTMINSTER
     "..................s.............................................................",
-    "..................dd............................................................",
-    "..................dd............................................................",
-    ".................dddd...........................................................",
-    ".................dddd...........................................................",
-    "...............dddddddd.........................................................",
-    "...............dddddddd.........................................................",
-    "...............dsddddsd.........................................................",
-    "...............dsddcdsd......................................lll................",
-    "...............dssssssd......................................lll................",
-    "..ddddddddddd..dddddddd...ddddddddddddddddd..............lllllllllll............",
-    "..ssdddssdddss.ddssdsdds..dssdddssdddssdddss...ss........lllllllllll............",
-    "dddddddddddddddddssdsdddddddddddddddddddddddddddddd......lllllllllll............",
-    "dddsddddsddddsdddssdsddsddddsddddsddddsddddsddddsddlllllllllllllllllllllllll....",
+    "..................dd........................................sssss...............",
+    "..................dd......................................ss.....ss.............",
+    ".................dddd....................................ss.......ss............",
+    ".................dddd....................................s.........s............",
+    "...............dddddddd.................................s...........s...........",
+    "...............dddddddd.................................s...........s...........",
+    "...............dsddddsd.................................s...........s...........",
+    "...............dsddcdsd.................................s....lll....s...........",
+    "...............dssssssd.................................s....lll....s...........",
+    "..ddddddddddd..dddddddd...ddddddddddddddddd..............sllllllllls............",
+    "..ssdddssdddss.ddssdsdds..dssdddssdddssdddss...ss........sslllllllss............",
+    "dddddddddddddddddssdsdddddddddddddddddddddddddddddd......lsslllllssl............",
+    "dddsddddsddddsdddssdsddsddddsddddsddddsddddsddddsddlllllllllsslsslllllllllll....",
     "dddsddddsddddsdddssdsddsddddsddddsddddsddddsddddsddlllllllllllllllllllllllll....",
     "dddddddddddddddddssdsddddddddddddddddddddddddddddddlllllllllllllllllllllllll....",
     "dddddddddddddddddddddddddddddddddddddddddddddddddddlllllllllllllllllllllllll...."
@@ -396,42 +396,42 @@ local MAP_ICON = {
 }
 -- Olympia Grand Hall and London Eye (same pixel source).
 BACK[4] = {
-  "...........................................................sssssss..............",
-  "...................sssssssssss...........................ssss.c.ssss............",
-  "...................sssssssssss..........................sss.......sss...........",
-  "...............sssssssssssssssssss.....................ss...........ss..........",
-  "............ssslllllllllllllllllllsss..................ss...........ss..........",
-  ".........ssslllllllllllllllllllllllllsss..............ss.............ss.........",
-  "......ssslllllllllllllllllllllllllllllllsss...........ss.............ss.........",
-  "....sslllllllllllllllllllllllllllllllllllllss.........s......ccc......s.........",
-  "....llllldlllllldlllllldlllllldlllllldllllllds........c......ccc......c.........",
-  "....llllldlllllldlllllldlllllldlllllldlllllldl........s......ccc......s.........",
-  "....llllldlllllldlllllldlllllldlllllldlllllldl........ss.....ddd.....ss.........",
-  "....llllldlllllldlllllldlllllldlllllldlllllldl........ss.....ddd.....ss.........",
-  "....lldddddddddddddddddddddddddddddddddddddddl.........ss....ddd....ss..........",
-  "..dddddddddddddddddddddddddddddddddddddddddddddd.......ss....ddd....ss..........",
-  "..dddddddddddddddddddddddddddddddddddddddddddddd........sss..ddd..sss...........",
-  "..dddddddddddddddddddddddddddddddddddddddddddddd.llllllllllllllllllllllllllll...",
-  "..dddddddddddddddddddddddddddddddddddddddddddddd.llllllllllllllllllllllllllll..."
+  "................................................................................",
+  "..................................ssssssssssss..................................",
+  "...........................sssssssssssssssssssssssss............................",
+  "......................sssssl..l..l..l..l..l..l..l..lsssss.......................",
+  "...................sss..l..l..l..l..l..l..l..l..l..l..l..sss....................",
+  "...............ssss..l..l..l..l..l..l..l..l..l..l..l..l..l..ssss................",
+  ".............ssl..l..l..l..l..l..l..l..l..l..l..l..l..l..l..l..lss..............",
+  "..........sss..l..l..l..l..l..l..l..l..l..l..l..l..l..l..l..l..l..sss...........",
+  "........ss..l..l..l..l..l..l..l..l..l..l..l..l..l..l..l..l..l..l..l..ss.........",
+  ".......s.l..l..l..l..l..l..l..l..l..l..l..l..l..l..l..l..l..l..l..l..l.ss.......",
+  ".........l..l..l..l..l..l..l..l..l..l..l..l..l..l..l..l..l..l..l..l..l..l.......",
+  ".......ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss.......",
+  ".......ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss.......",
+  "...dddddddssdlllllllddssdlllllllddssdlllllllddssdlllllllddssdlllllllddssdlllllll",
+  "...dddddddssdlllllllddssdlllllllddssdlllllllddssdlllllllddssdlllllllddssdlllllll",
+  "...dddddddssdlllllllddssdlllllllddssdlllllllddssdlllllllddssdlllllllddssdlllllll",
+  "...dddddddssddddddddddssddddddddddssddddddddddssddddddddddssddddddddddssddddd..."
 }
 MAP_ICON[4] = {
   "........................",
-  "................sssss...",
-  "..............sssssssss.",
-  ".............sss.....sss",
-  "....sssss....ss.......ss",
-  "...sllllls...s.........s",
-  "..sllllllls.............",
-  ".sllllllllls............",
-  ".llllllllllls....ccc....",
-  ".llllllllllll....ccc....",
-  ".llllllllllll.....d.....",
-  ".lllllllllllls....d....s",
-  ".llllllllllllss...d...ss",
-  ".llllllllllllsss..d..sss",
-  ".dddddddddddd.ssssdssss.",
-  ".dddddddddddd...ssdss...",
-  ".dddddddddddd.....d....."
+  "........................",
+  "........sssssss.........",
+  ".......sl.l.l.ls........",
+  "......s.l.l.l.l.s.......",
+  ".....sl.l.l.l.l.ls......",
+  "....s.l.l.l.l.l.l.s.....",
+  "...sl.l.l.l.l.l.l.ls....",
+  "..s.l.l.l.l.l.l.l.l.s...",
+  "..l.l.l.l.l.l.l.l.l.l...",
+  "..l.l.l.l.l.l.l.l.l.ls..",
+  "..l.l.l.l.l.l.l.l.l.l...",
+  "..ssssssssssssssssssss..",
+  "..sdssssdssssdssssdsss..",
+  ".dddddddddddddddddddddd.",
+  ".dddddddddddddddddddddd.",
+  ".dddddddddddddddddddddd."
 }
 local BACK_W = 80
 
@@ -441,7 +441,7 @@ local function load(rows)
   return rows
 end
 local img = {
-  token = {load(TOKEN_A), load(TOKEN_B)},
+  token = {ui.load(TOKEN_A, COIN_P), ui.load(TOKEN_B, COIN_P)},
   moon = load(MOON), cloud = load(CLOUD), ramp = load(RAMP),
   skins = {}, sticks = {}, back = {}, mapIcon = {},
 }
@@ -461,9 +461,16 @@ MAP_ICON = nil
 
 ------------------------------------------------------------------ ui
 ui.bg("bg")
-local cv = ui.canvas(0, 0, CW, CH, {scale = SCALE, color = "bg"})
+local cvMenu = ui.canvas(0, 0, 80, 54, {scale = 4, color = "bg"})
+local cvPlay = ui.canvas(0, 0, CW, CH, {scale = 3, color = "bg"})
+local cv = cvMenu
+local function useCanvas(play)
+  cv = play and cvPlay or cvMenu
+  cvMenu:show(not play); cvPlay:show(play)
+end
+useCanvas(false)
 local lblTop   = ui.label(4, 2, "", {size = 12, color = "dim"})
-local lblWind  = ui.label(0, 2, "", {size = 12, color = "text", w = ui.W - 4, align = "right"})
+local lblWind  = ui.label(0, 2, "", {size = 12, color = 0xE8E2EB, w = ui.W - 4, align = "right"})
 local lblShotsTitle = ui.label(0, 151, "", {size = 12, color = "dim", w = ui.W, align = "center"})
 local lblKick = {
   ui.label(0, 170, "", {size = 20, color = "purple", w = 106, align = "center"}),
@@ -488,6 +495,8 @@ local popTimer, popY = 0, 20
 ------------------------------------------------------------------ state
 local best = storage.get("best") or 0
 local ranks = storage.get("ranks") or {}   -- { {name=, score=}, ... } best first
+local peers = storage.get("peers") or {}  -- scores received from badges running this app
+local shareT = 0
 local stickIdx = storage.get("stick") or 1
 local mapIdx = storage.get("map") or 1
 if mapIdx < 1 or mapIdx > #MAPS then mapIdx = 1 end
@@ -533,6 +542,9 @@ local function playerName()
   local o = badge and badge.owner and badge.owner()
   return o or "you"
 end
+local function shareBest(to)
+  if mesh and mesh.send then mesh.send(to or "*", {kind = "moonshot-score", value = best}) end
+end
 
 local function finishFirstStage()
   if S.swing == 1 and not stage1Done then
@@ -549,10 +561,10 @@ local function showStick()
   local st = STICKS[stickIdx]
   if stickUnlocked(stickIdx) then
     lblStick:color("dim")
-    lblStick:text("DOWN  " .. st.name .. "  /  " .. st.desc)
+    lblStick:text("BAT  " .. st.name .. "  /  " .. st.desc)
   else
     lblStick:color("dim")
-    lblStick:text("DOWN  " .. st.name .. "  /  best " .. st.unlock .. " m")
+    lblStick:text("BAT  " .. st.name .. "  /  best " .. st.unlock .. " m")
   end
 end
 
@@ -567,7 +579,7 @@ local function setupWorld()
 end
 
 local function showMap()
-  lblMap:text("UP  " .. MAPS[mapIdx].name)
+  lblMap:text("^v  " .. MAPS[mapIdx].name)
 end
 
 local function showSkin()
@@ -579,7 +591,7 @@ end
 
 local function closeRanks()
   if rankList then rankList:remove(); rankList = nil end
-  cv:show(true)
+  useCanvas(false)
 end
 
 local function clearResults()
@@ -613,12 +625,12 @@ local function newRun()
   showMap()
   showSkin()
   previewT = 0
-  ui.hint("UP map   <> hero   DN bat   SEL play")
+  ui.hint("UP/DN map   <> hero   SELECT play")
   if bar then bar:remove(); bar = nil end
   led.off()
 end
 
-local function showRanks()
+local function showRanks(broadcast)
   closeRanks()
   clearResults()
   S.mode = "ranks"
@@ -627,25 +639,35 @@ local function showRanks()
   lblTitle:text(""); lblSkin:text(""); lblStick:text(""); lblBest:text(""); lblPlay:text("")
   lblTop:text(""); lblWind:text(""); lblPop:text("")
   lblMsg:text(""); lblSub:text("")
+  local scores = {{name = "YOU", score = best}}
+  for _, p in pairs(peers) do
+    if type(p) == "table" and type(p.score) == "number" and p.score >= 0 then
+      scores[#scores + 1] = {name = p.name or "BADGE", score = p.score}
+    end
+  end
+  table.sort(scores, function(a, b) return a.score > b.score end)
   local items = {}
   for i = 1, RANKS do
-    local r = ranks[i]
+    local r = scores[i]
     items[i] = r and {title = i .. ".  " .. r.name, right = r.score .. " m"} or {title = i .. ".  ---", right = ""}
   end
-  cv:show(false)
+  cvMenu:show(false); cvPlay:show(false)
   rankList = ui.list(20, 8, 280, 184, items)
-  ui.hint("CANCEL back")
+  ui.hint("You + met badges running this app   CANCEL")
+  if broadcast ~= false then shareBest() end
 end
 
 local function startSwing()
   S.swing = S.swing + 1
-  S.mode = "drop"
+  useCanvas(true)
+  S.mode = "intro"
+  S.introT = 0
   S.map = mapIdx
   clearResults()
   playBg:show(false)
   S.wind = fl(rnd(-6, 6) + 0.5)
   S.token = {x = BAT_X + 3, y = -8}
-  S.wait = 0.65          -- enough time to read the stage, then immediate action
+  S.wait = 0 -- the parallax intro replaces the old static wait
   S.trail = {}
   S.power = 0
   S.charging = false
@@ -681,9 +703,11 @@ end
 
 local function endRun()
   S.mode = "end"
+  useCanvas(false)
   local total = fl(S.total)
   local isBest = total > best
   if isBest then best = total; storage.set("best", best) end
+  shareBest()
   local pos = addRank(total)
   lblTop:text(MAPS[mapIdx].name .. " / " .. SKINS[skinIdx].name)
   lblWind:text("")
@@ -704,7 +728,8 @@ local function endRun()
     S.confetti[i] = {x = (i * 23) % 78, y = -((i * 7) % 23), v = 10 + i % 4 * 4,
       color = colors[i % 3 + 1]}
   end
-  ui.hint("SELECT again   UP ranks   CANCEL menu")
+  lblBest:pos(0, 191); lblBest:text("NEXT BAT  " .. STICKS[stickIdx].name)
+  ui.hint("DOWN bat   UP ranks   SELECT again")
   if total >= AWARD_BIG then led.fill(0x99, 0x45, 0xFF) elseif total >= AWARD_MIN then led.fill(0x14, 0xF1, 0x95) else led.off() end
 
   local amount = total >= AWARD_BIG and 3 or (total >= AWARD_MIN and 1 or 0)
@@ -852,7 +877,7 @@ local function draw()
     return
   end
   cv:clear(map.sky)
-  local cam = S.cam or 0
+  local cam = S.mode == "intro" and -32 * (1 - math.min(1, S.introT / 0.6)) or (S.cam or 0)
   -- moon (parallax 0.5)
   local mx = MOON_X * 0.5 - cam * 0.5 + 40
   if mx > -8 and mx < CW then cv:image(img.moon, fl(mx), 3) end
@@ -866,9 +891,17 @@ local function draw()
   local back = img.back[mapIdx]
   cv:image(back, bx, GROUND - 17)
   cv:image(back, bx + BACK_W, GROUND - 17)
+  cv:image(back, bx + BACK_W * 2, GROUND - 17)
   -- subdued foreground keeps characters and flying token readable
   cv:rect(0, GROUND, CW, CH - GROUND, map.ground)
   cv:line(0, GROUND, CW - 1, GROUND, map.s)
+  if S.mode == "intro" then
+    -- Fast near-ground motion against the slow skyline suggests depth.
+    for i = 0, 3 do
+      local x = (i * 29 - fl(cam * 1.7)) % CW
+      cv:line(x, GROUND + 4, math.min(CW - 1, x + 8), GROUND + 4, map.s)
+    end
+  end
   -- Three pictorial kicks; no live metre counter or distance markers.
   for i = 1, SWINGS do
     local color = i < S.swing and 0x9945FF or (i == S.swing and 0x14F195 or map.s)
@@ -912,6 +945,10 @@ end
 ------------------------------------------------------------------ loop
 function on_tick(ms)
   local dt = math.min(ms, 80) / 1000
+  if S.mode == "title" or S.mode == "end" then
+    shareT = shareT + dt
+    if shareT >= 12 then shareT = 0; shareBest() end
+  end
   S.tokenFrame = S.tokenFrame + dt * 8
   if S.mode == "title" then previewT = previewT + dt end
   if S.swingAnim > 0 then S.swingAnim = S.swingAnim - dt * 4 end
@@ -928,7 +965,10 @@ function on_tick(ms)
     S.celebrate = math.max(0, S.celebrate - dt)
     for _, p in ipairs(S.confetti) do p.y = p.y + p.v * dt end
   end
-  if S.mode == "drop" then tickDrop(dt)
+  if S.mode == "intro" then
+    S.introT = S.introT + dt
+    if S.introT >= 0.6 then S.mode = "drop" end
+  elseif S.mode == "drop" then tickDrop(dt)
   elseif S.mode == "flight" then tickFlight(dt)
   elseif S.mode == "miss" then
     S.missT = S.missT + dt
@@ -962,11 +1002,9 @@ function on_key(k, rep)
         nextSkin = (nextSkin - 1 + direction) % #SKINS + 1
       end
       skinIdx = nextSkin; storage.set("skin", skinIdx); showSkin()
-    elseif k == "down" then
-      local nextStick = stickIdx % #STICKS + 1
-      while not stickUnlocked(nextStick) do nextStick = nextStick % #STICKS + 1 end
-      stickIdx = nextStick; storage.set("stick", stickIdx); showStick()
-    elseif k == "up" then mapIdx = mapIdx % #MAPS + 1; storage.set("map", mapIdx); showMap()
+    elseif k == "down" or k == "up" then
+      mapIdx = (mapIdx - 1 + (k == "up" and 1 or -1)) % #MAPS + 1
+      storage.set("map", mapIdx); showMap()
     elseif k == "select" then
       if not SKINS[skinIdx].unlocked then ui.toast("Clear stage 1 to unlock"); return true end
       if not stickUnlocked(stickIdx) then ui.toast("Locked: reach " .. STICKS[stickIdx].unlock .. " m"); return true end
@@ -978,6 +1016,11 @@ function on_key(k, rep)
   end
   if S.mode == "end" then
     if k == "up" then showRanks()
+    elseif k == "down" then
+      local nextStick = stickIdx % #STICKS + 1
+      while not stickUnlocked(nextStick) do nextStick = nextStick % #STICKS + 1 end
+      stickIdx = nextStick; storage.set("stick", stickIdx)
+      lblBest:text("NEXT BAT  " .. STICKS[stickIdx].name)
     elseif k == "select" then
       S.total = 0; S.swing = 0; S.shots = {}; S.celebrate = 0
       lblMsg:text(""); lblSub:text(""); msgTimer = 0
@@ -986,6 +1029,32 @@ function on_key(k, rep)
     return true
   end
   return true
+end
+
+function on_mesh(from, msg)
+  if type(from) ~= "string" or #from < 4 or #from > 16 or not from:match("^[%w]+$") then return end
+  if type(msg) ~= "table" or msg.kind ~= "moonshot-score" then return end
+  local score = msg.value
+  if type(score) ~= "number" or score ~= math.floor(score) or score < 0 or score > 50000 then return end
+  if badge and badge.id and from == badge.id() then return end
+  local name = from
+  if mesh and mesh.nearby then
+    for _, p in ipairs(mesh.nearby() or {}) do
+      if p.id == from and type(p.name) == "string" then name = p.name; break end
+    end
+  end
+  name = name:gsub("[^%w@._ -]", ""):sub(1, 18)
+  if name == "" then name = from end
+  local first = peers[from] == nil
+  peers[from] = {name = name, score = math.max(score, peers[from] and peers[from].score or 0)}
+  local n = 0
+  for _ in pairs(peers) do n = n + 1 end
+  if n > 8 then
+    for id in pairs(peers) do if id ~= from then peers[id] = nil; break end end
+  end
+  storage.set("peers", peers)
+  if first then shareBest(from) end
+  if S.mode == "ranks" then showRanks(false) end
 end
 
 function on_exit()

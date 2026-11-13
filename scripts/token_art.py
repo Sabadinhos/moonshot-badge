@@ -17,7 +17,7 @@ def coin(frame=0):
     return [''.join(row) for row in p]
 
 if __name__=='__main__':
-    colors={'.':(25,23,34),'y':(218,190,134),'k':(39,35,55),'e':(49,207,167),'b':(155,106,234),'w':(255,249,218)}
+    colors={'.':(25,23,34),'y':(122,83,209),'k':(57,38,110),'e':(20,241,149),'b':(54,201,159),'w':(190,169,255)}
     im=Image.new('RGB',(100,50),colors['.'])
     for f in range(2):
         for y,row in enumerate(coin(f)):

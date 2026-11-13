@@ -13,6 +13,8 @@ def state(): return G._S.mode
 
 def play_swing(release_at_y):
     """hold select from the first tick, release when token y >= release_at_y"""
+    while state() == "intro": tick()
+    assert state() == "drop"
     keys["select"] = True
     while state() == "drop":
         tick()
@@ -32,48 +34,63 @@ G.on_key("up", False)
 assert store.get("map") == 2, "UP should cycle map without starting the game"
 G.on_key("up", False); assert store.get("map") == 3
 G.on_key("up", False); assert store.get("map") == 4, "Olympia must be selectable"
-assert any(x == ("label", "UP  OLYMPIA") for x in log)
+assert any(x == ("label", "^v  OLYMPIA") for x in log)
 G.on_key("up", False); assert store.get("map") == 1, "map selection must wrap"
 G.on_key("up", False); assert store.get("map") == 2
-assert any(x == ("label", "UP  COVENT GARDEN") for x in log)
+assert any(x == ("label", "^v  COVENT GARDEN") for x in log)
 tick(2)  # exercise the preview renderer after switching maps
 G.on_key("left", False)  # wraps past the hidden skin
 assert store.get("skin") == 9, "hidden skin must be skipped before stage 1 is done"
-G.on_key("down", False); assert store.get("stick") == 1, "locked bat must be skipped"
-G.on_key("select", False); assert state() == "drop", state()
+G.on_key("down", False); assert store.get("map") == 1, "DOWN selects the previous map"
+G.on_key("down", False); assert store.get("map") == 4, "DOWN wraps from first to last map"
+G.on_key("up", False); assert store.get("map") == 1
+G.on_key("up", False); assert store.get("map") == 2
+G.on_key("select", False); assert state() == "intro", state()
+tick(21); assert state() == "drop", "parallax intro must finish"
 assert G._S.map == 2, "selected scene must carry into gameplay"
-results = [play_swing(29), play_swing(20), play_swing(45)]
+results = [play_swing(43), play_swing(36), play_swing(60)]
 assert store.get("stage1Done") is True, "Sabadinhos skin should unlock after stage 1"
 G.on_key("back", False); assert state() == "title"
 G.on_key("right", False); assert store.get("skin") == 10, "Sabadinhos should be selectable after stage 1"
-G.on_key("select", False); assert state() == "drop", "unlocked skin should launch immediately"
+G.on_key("select", False); assert state() == "intro", "unlocked skin should launch immediately"
 G.on_key("back", False); assert state() == "title"
 print("swings (mode, secs, total):", results)
 print("final mode:", state(), "total:", round(G._S.total), "best:", store.get("best"), "awards:", awards)
 print("hints/toasts:", [x for x in log if x[0] != "label"][-4:])
 print("labels:", [x[1] for x in log if x[0] == "label"][-8:])
 
-G.on_key("select", False); assert state() == "drop"
-r2 = [play_swing(29) for _ in range(3)]
+G.on_key("select", False); assert state() == "intro"
+r2 = [play_swing(43) for _ in range(3)]
 print("run2:", r2, "mode:", state(), "awards:", awards)
 assert state() == "end"
 assert len(G._S.shots) == 3 and sum(G._S.shots.values()) == int(G._S.total), "all kick scores must be on the result"
 assert G._S.celebrate > 0, "end scene confetti must begin"
 assert any(x[0] == "label" and "KICK 1" in x[1] for x in log), "end scene must show individual kicks"
 tick(100); assert G._S.celebrate == 0, "confetti must stop instead of burning CPU"
-G.on_key("select", False); assert state() == "drop" and len(G._S.shots) == 0, "replay must reset kick stats"
+G.on_key("select", False); assert state() == "intro" and len(G._S.shots) == 0, "replay must reset kick stats"
 G.on_key("back", False); assert state() == "title"
-G.on_key("select", False); assert state() == "drop"
-[play_swing(29) for _ in range(3)]
+G.on_key("select", False); assert state() == "intro"
+[play_swing(43) for _ in range(3)]
 assert state() == "end"
+G.on_key("down", False); assert store.get("stick") == 2
+G.on_key("down", False); assert store.get("stick") == 1, "locked Ledger must be skipped"
+G.on_mesh("FRIEND1", L.table(kind="moonshot-score", value=777))
+assert store.get("peers")["FRIEND1"]["name"] == "@friend"
+G.on_mesh("FRIEND1", L.table(kind="moonshot-score", value=600))
+assert store.get("peers")["FRIEND1"]["score"] == 777, "peer personal best must not decrease"
+G.on_mesh("BAD1111", L.table(kind="moonshot-score", value=999999))
+G.on_mesh("BAD2222", L.table(kind="moonshot-score", value=123.5))
+G.on_mesh("7K2Q9M", L.table(kind="moonshot-score", value=999))
+assert store.get("peers")["BAD1111"] is None and store.get("peers")["BAD2222"] is None
+assert store.get("peers")["7K2Q9M"] is None
 G.on_key("up", False); assert state() == "ranks", state()
+assert any(i.get("title", "").endswith("@friend") for x in log if x[0] == "list" for i in x[1])
 print("rank list:", [x for x in log if x[0] == "list"][-1])
 G.on_key("back", False); assert state() == "title"
 print("OK")
 
-# bats remain a separate DOWN action on the title screen
-G.on_key("down", False); print("stick:", store.get("stick"), [x[1] for x in log if x[0]=="label"][-1])
-G.on_key("down", False); print("stick:", store.get("stick"), [x[1] for x in log if x[0]=="label"][-1])
-G.on_key("select", False); print("mode after select on stick 3 (best=%s):" % store.get("best"), state())
+# DOWN on title moves the map, while the selected bat persists after the result screen.
+G.on_key("down", False); assert store.get("stick") == 1
+G.on_key("select", False); print("mode after replay (best=%s):" % store.get("best"), state())
 print("ranks stored:", store.get("ranks") and [dict(v.items()) for v in store.get("ranks").values()])
 print("OK2")

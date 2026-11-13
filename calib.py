@@ -6,9 +6,11 @@ def run_case(power, dy, wind, seed=0):
     L, G, keys = sim_env.load(seed=seed)
     G.on_key("select", False)
     S = G._S
+    assert S.mode == "intro"
+    S.mode = "drop"  # skip only the intro; keep calibrated gameplay physics
     S.wind = wind; S.power = power
-    S.wait = 0  # skip the stage intro for direct physics calibration
-    S.token.y = 33 - 4 + dy
+    S.wait = 0
+    S.token.y = 47 - 4 + dy
     S.charging = True
     keys["select"] = False
     G.on_tick(30)

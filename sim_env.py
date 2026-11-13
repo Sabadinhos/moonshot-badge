@@ -71,6 +71,8 @@ def load(seed=None):
                         remove=lambda k: store.pop(k, None))
     G.led = L.table(count=8, set=noop, hex=noop, fill=noop, off=noop)
     G.badge = L.table(owner=lambda: "@tester", id=lambda: "7K2Q9M")
+    G.mesh = L.table(send=lambda to, msg: log.append(("mesh", to, msg["value"])),
+                     nearby=lambda: L.table_from([L.table(id="FRIEND1", name="@friend", level=42)]))
     G.sys = L.table(keys=lambda: L.table(select=keys["select"]), millis=lambda: 0)
 
     def award(amount, reason, cb):

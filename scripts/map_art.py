@@ -18,6 +18,12 @@ def scene(kind):
   box(16,7,21,9,'s');box(17,7,20,8,'d');dot(19,8,'c')
   box(17,11,18,15,'s');box(20,11,20,15,'s')
   box(51,13,75,16,'l');box(57,10,67,12,'l');box(61,8,63,9,'l')
+  # The London Eye stays faint and distant behind the skyline.
+  for x in range(55,70):
+   for y in range(1,15):
+    r=(x-62)*(x-62)+(y-7)*(y-7)
+    if 30<=r<=44:dot(x,y,'s')
+  box(62,9,62,14,'l')
  elif kind=='TOWER BRIDGE':
   # Twin neo-Gothic towers connected by suspended arches above the Thames.
   box(4,14,76,16,'l');box(8,12,72,13,'d')
@@ -38,20 +44,16 @@ def scene(kind):
    box(x,10,x+6,14,'l');box(x+1,9,x+5,9,'s');box(x+2,11,x+4,14,'d')
   box(12,2,16,3,'l');box(62,2,67,3,'l')
  elif kind=='OLYMPIA':
-  # Olympia Grand Hall's arched glass roof; the Eye reads as a London landmark.
-  box(2,13,47,16,'d')
-  for x in range(4,46):
-   y=3+((x-24)*(x-24))//82
-   dot(x,y,'s');box(x,y+1,x,12,'l')
-  for x in range(9,45,7):box(x,8,x,12,'d')
-  box(19,1,29,2,'s');box(6,12,44,12,'d')
-  for x in range(53,72):
-   for y in range(0,17):
-    radius=(x-62)*(x-62)+(y-8)*(y-8)
-    if 52<=radius<=78:dot(x,y,'s')
-  box(61,7,63,9,'c');box(61,10,63,16,'d')
-  for x,y in ((62,1),(62,15),(54,8),(70,8)):dot(x,y,'c')
-  box(49,15,76,16,'l')
+  # Single arched iron-and-glass Grand Hall; no unrelated wheel beside it.
+  box(3,13,76,16,'d')
+  for x in range(7,73):
+   y=2+((x-39)*(x-39))//145
+   dot(x,y,'s')
+   if x%3==0:box(x,y+1,x,12,'l')
+  box(7,11,72,12,'s')
+  for x in range(10,72,12):
+   box(x,12,x+1,16,'s');box(x+3,13,x+9,15,'l')
+  box(34,1,45,1,'s')
  else:raise ValueError(kind)
  return [''.join(row) for row in g]
 
@@ -83,15 +85,13 @@ def icon(kind):
    box(x,9,x+4,14,'s');box(x+1,10,x+3,14,'l');box(x+2,11,x+2,14,'.')
   box(2,8,2,15,'s');box(21,8,21,15,'s')
  elif kind=='OLYMPIA':
-  box(1,14,12,16,'d')
-  for x in range(1,13):
-   y=4+((x-6)*(x-6))//8
-   box(x,y,x,13,'l');box(x,y,x,y,'s')
-  for x in range(13,24):
-   for y in range(1,16):
-    r=(x-18)*(x-18)+(y-8)*(y-8)
-    if 32<=r<=54:g[y][x]='s'
-  box(17,8,19,9,'c');box(18,10,18,16,'d')
+  box(1,14,22,16,'d')
+  for x in range(2,22):
+   y=2+((x-11)*(x-11))//12
+   box(x,y,x,y,'s')
+   if x%2==0:box(x,y+1,x,13,'l')
+  box(2,12,21,13,'s')
+  for x in (3,8,13,18):box(x,13,x,16,'d')
  else:raise ValueError(kind)
  return [''.join(row) for row in g]
 
