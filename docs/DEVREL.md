@@ -6,7 +6,7 @@
 
 ## What the player does
 
-Pick one of four London maps and a character. A SOL coin drops; hold SELECT to charge and release near the bat to kick it. Three kicks make a run; the sum of their distances is the final score. Wind changes the flight. A short parallax intro and an end screen show the results. Maps, characters, bats and personal best persist on that badge.
+Pick one of four London maps and a character. A SOL coin drops; hold SELECT to charge and release near the bat to kick it. Three kicks make a run; the sum of their distances is the final score. Wind changes the flight, with small drifting curls indicating its direction. Each kick starts with a brief parallax intro and an input-safe ready beat: holding or repeatedly pressing SELECT cannot spend a kick before the animation is over and the button has been released. An end screen shows the results. Maps, characters, bats and personal best persist on that badge.
 
 ## Nearby scores
 
@@ -19,7 +19,7 @@ The app requests 1 !LAMP for a run of at least 600 m, or 3 !LAMPs for at least 1
 ## Release and test
 
 - `main.lua` and `app.json` are the upload package. The tested ZIP is produced locally under `dist/`; the GitHub repository also includes test and art sources, so do not upload the entire repository.
-- Local Lua simulation covers menu controls, three-kick play, persistence, results, reward callback and mesh message validation; the physics sweep and source-art/package checks passed for v0.5.1.
+- Local Lua simulation covers menu controls, intro/ready input safety on the first and later kicks, three-kick play, persistence, results, reward callback and mesh message validation; the physics sweep and source-art/package checks passed for v0.5.2.
 - **Not yet verified on the physical badge.** Before App Store publication, run the ZIP via the submission page's emulator / USB **Run on badge**; test rendering, memory, input, two-badge mesh exchange and the interaction between mesh radio and Wi-Fi. A sign-in and linked X account are required to publish.
 - Publishing without an award cap is possible. Once a cap exists, subsequent code/file/permission changes require organiser approval. Ask DevRel for the cap separately after the gameplay and reward policy are validated.
 

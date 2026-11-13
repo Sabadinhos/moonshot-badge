@@ -671,12 +671,16 @@ local function startSwing()
   useCanvas(true)
   S.mode = "intro"
   S.introT = 0
+  S.readyT = 0
   S.map = mapIdx
   clearResults()
   playBg:show(false)
   S.wind = fl(rnd(-6, 6) + 0.5)
+  S.breezes = {}
+  for i = 1, 4 do
+    S.breezes[i] = {x = rnd(0, CW), y = rnd(12, 34), speed = rnd(2, 5), phase = rnd(0, 6)}
+  end
   S.token = {x = BAT_X + 3, y = -8}
-  S.wait = 0 -- the parallax intro replaces the old static wait
   S.trail = {}
   S.power = 0
   S.charging = false
@@ -691,10 +695,10 @@ local function startSwing()
   local w = S.wind
   local arrow = w > 0 and ">" or (w < 0 and "<" or "=")
   lblWind:text("WIND " .. arrow .. " " .. math.abs(w))
-  setMsg("KICK!", nil, 550, "green")
+  setMsg("GET READY", nil, 550, "green")
   if not bar then bar = ui.bar(60, 196, 200, 8, 0) end
   bar:set(0)
-  ui.hint("hold SELECT: power   release: swing")
+  ui.hint("release SELECT to start")
   led.off()
 end
 
@@ -785,7 +789,6 @@ local function hit()
 end
 
 local function tickDrop(dt)
-  if S.wait > 0 then S.wait = S.wait - dt; return end
   local k = sys.keys and sys.keys() or {}
   local t = S.token
   t.y = t.y + DROP_SPEED * dt
@@ -916,11 +919,26 @@ local function draw()
     local color = i < S.swing and 0x9945FF or (i == S.swing and 0x14F195 or map.s)
     cv:rect(3 + (i - 1) * 7, 2, 5, 3, color)
   end
-  -- Wind streaks drift in the actual wind direction and speed.
+  -- Small drifting curls; varied spacing and speed, never long plane-like strokes.
   if S.wind ~= 0 then
-    for i = 1, 4 do
-      local x = (i * 19 + fl(S.tokenFrame * S.wind * 0.7)) % CW
-      cv:line(x, 8 + i * 4, math.min(CW - 1, x + 2 + math.abs(S.wind)), 8 + i * 4, map.s)
+    local dir = S.wind > 0 and 1 or -1
+    for _, b in ipairs(S.breezes) do
+      local x = fl((b.x + S.tokenFrame * S.wind * b.speed * 0.06) % CW)
+      local y = fl(b.y + math.sin(S.tokenFrame * 0.15 + b.phase) * 1.2)
+      if x > 4 and x < CW - 5 then
+        if b.phase < 3 then
+          cv:pixel(x, y + 1, map.s)
+          cv:pixel(x + dir, y, map.s)
+          cv:pixel(x + dir * 2, y - 1, map.s)
+          cv:pixel(x + dir * 3, y - 1, map.s)
+          cv:pixel(x + dir * 4, y, map.s)
+        else
+          cv:pixel(x, y, map.s)
+          cv:pixel(x + dir, y + 1, map.s)
+          cv:pixel(x + dir * 2, y, map.s)
+          cv:pixel(x + dir * 3, y - 1, map.s)
+        end
+      end
     end
   end
   for _, rx in ipairs(ramps) do
@@ -976,7 +994,19 @@ function on_tick(ms)
   end
   if S.mode == "intro" then
     S.introT = S.introT + dt
-    if S.introT >= 0.6 then S.mode = "drop" end
+    if S.introT >= 0.6 then S.mode = "ready"; S.readyT = 0 end
+  elseif S.mode == "ready" then
+    local k = sys.keys and sys.keys() or {}
+    -- Release the launch press first; mashing never advances the token.
+    if k.select then S.readyT = 0
+    else
+      S.readyT = S.readyT + dt
+      if S.readyT >= 0.45 then
+        S.mode = "drop"
+        setMsg("KICK!", nil, 500, "green")
+        ui.hint("hold SELECT: power   release: swing")
+      end
+    end
   elseif S.mode == "drop" then tickDrop(dt)
   elseif S.mode == "flight" then tickFlight(dt)
   elseif S.mode == "miss" then

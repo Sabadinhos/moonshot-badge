@@ -13,7 +13,8 @@ def state(): return G._S.mode
 
 def play_swing(release_at_y):
     """hold select from the first tick, release when token y >= release_at_y"""
-    while state() == "intro": tick()
+    while state() in ("intro", "ready"):
+        tick()
     assert state() == "drop"
     keys["select"] = True
     while state() == "drop":
@@ -46,9 +47,22 @@ G.on_key("down", False); assert store.get("map") == 4, "DOWN wraps from first to
 G.on_key("up", False); assert store.get("map") == 1
 G.on_key("up", False); assert store.get("map") == 2
 G.on_key("select", False); assert state() == "intro", state()
-tick(21); assert state() == "drop", "parallax intro must finish"
+keys["select"] = True  # nervous player holds/mashes during the fly-in
+G.on_key("select", False)
+tick(21); assert state() == "ready", "fly-in must lead to a protected ready state"
+tick(40); assert state() == "ready" and G._S.token.y == -8, "held input must not consume a kick"
+keys["select"] = False
+tick(14); assert state() == "ready", "release needs a brief calm beat"
+tick(1); assert state() == "drop" and not G._S.charging and G._S.token.y == -8
 assert G._S.map == 2, "selected scene must carry into gameplay"
-results = [play_swing(43), play_swing(36), play_swing(60)]
+results = [play_swing(43)]
+assert state() == "intro", "second kick should have its own fly-in"
+keys["select"] = True
+for _ in range(3): G.on_key("select", False)
+tick(26)
+assert state() == "ready" and G._S.swing == 2 and G._S.token.y == -8
+keys["select"] = False
+results.extend([play_swing(36), play_swing(60)])
 assert store.get("stage1Done") is True, "Sabadinhos skin should unlock after stage 1"
 G.on_key("back", False); assert state() == "title"
 G.on_key("right", False); assert store.get("skin") == 10, "Sabadinhos should be selectable after stage 1"
