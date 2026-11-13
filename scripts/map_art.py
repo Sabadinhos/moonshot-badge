@@ -41,6 +41,35 @@ def scene(kind):
  return [''.join(row) for row in g]
 
 MAPS=['WESTMINSTER','TOWER BRIDGE','COVENT GARDEN']
+
+def icon(kind):
+ """24x17 transparent landmark emblems for the menu, not scene thumbnails."""
+ g=[['.']*24 for _ in range(17)]
+ def box(x1,y1,x2,y2,c):
+  for y in range(y1,y2+1):
+   for x in range(x1,x2+1):
+    if 0<=x<24 and 0<=y<17:g[y][x]=c
+ if kind=='WESTMINSTER':
+  box(8,6,15,16,'d');box(9,4,14,5,'d');box(10,2,13,3,'d');box(11,0,12,1,'s')
+  box(9,8,14,10,'s');box(10,8,13,9,'d');box(11,9,12,9,'c')
+  box(10,12,10,15,'s');box(13,12,13,15,'s')
+  box(3,15,7,16,'l');box(16,15,20,16,'l')
+ elif kind=='TOWER BRIDGE':
+  for x in (2,17):
+   box(x,5,x+4,16,'d');box(x+1,3,x+3,4,'d');box(x+2,1,x+2,2,'s')
+   box(x+1,8,x+3,9,'s');box(x+2,8,x+2,9,'d')
+  box(7,13,16,14,'d');box(7,12,16,12,'s')
+  box(8,10,8,11,'s');box(15,10,15,11,'s')
+  box(10,9,10,11,'s');box(13,9,13,11,'s')
+ elif kind=='COVENT GARDEN':
+  box(2,4,21,5,'s');box(4,2,19,3,'d');box(10,0,13,1,'s')
+  box(2,6,21,7,'d');box(2,15,21,16,'d')
+  for x in (3,10,17):
+   box(x,9,x+4,14,'s');box(x+1,10,x+3,14,'l');box(x+2,11,x+2,14,'.')
+  box(2,8,2,15,'s');box(21,8,21,15,'s')
+ else:raise ValueError(kind)
+ return [''.join(row) for row in g]
+
 CROPS=[9,14,24]
 COLORS=[{'sky':'0x171720','ground':'0x302B39','d':'0x51485F','s':'0x80738B','l':'0x363847','c':'0xD8B984','menu':'0xE8E2EB'},
         {'sky':'0x15242B','ground':'0x293D44','d':'0x4B6973','s':'0x829DA4','l':'0x2A4A55','c':'0xD8B984','menu':'0xE0ECEF'},

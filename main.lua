@@ -341,6 +341,66 @@ local BACK = {
     ".dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd."
   },
 }
+-- Transparent 24x17 landmark emblems, not scaled backdrop screenshots.
+local MAP_ICON = {
+  { -- WESTMINSTER
+    "...........ss...........",
+    "...........ss...........",
+    "..........dddd..........",
+    "..........dddd..........",
+    ".........dddddd.........",
+    ".........dddddd.........",
+    "........dddddddd........",
+    "........dddddddd........",
+    "........dsddddsd........",
+    "........dsdccdsd........",
+    "........dssssssd........",
+    "........dddddddd........",
+    "........ddsddsdd........",
+    "........ddsddsdd........",
+    "........ddsddsdd........",
+    "...lllllddsddsddlllll...",
+    "...lllllddddddddlllll..."
+  },
+  { -- TOWER BRIDGE
+    "........................",
+    "....s..............s....",
+    "....s..............s....",
+    "...ddd............ddd...",
+    "...ddd............ddd...",
+    "..ddddd..........ddddd..",
+    "..ddddd..........ddddd..",
+    "..ddddd..........ddddd..",
+    "..dsdsd..........dsdsd..",
+    "..dsdsd...s..s...dsdsd..",
+    "..ddddd.s.s..s.s.ddddd..",
+    "..ddddd.s.s..s.s.ddddd..",
+    "..dddddssssssssssddddd..",
+    "..dddddddddddddddddddd..",
+    "..dddddddddddddddddddd..",
+    "..ddddd..........ddddd..",
+    "..ddddd..........ddddd.."
+  },
+  { -- COVENT GARDEN
+    "..........ssss..........",
+    "..........ssss..........",
+    "....dddddddddddddddd....",
+    "....dddddddddddddddd....",
+    "..ssssssssssssssssssss..",
+    "..ssssssssssssssssssss..",
+    "..dddddddddddddddddddd..",
+    "..dddddddddddddddddddd..",
+    "..s..................s..",
+    "..ssssss..sssss..sssss..",
+    "..ssllls..sllls..sllls..",
+    "..ssl.ls..sl.ls..sl.ls..",
+    "..ssl.ls..sl.ls..sl.ls..",
+    "..ssl.ls..sl.ls..sl.ls..",
+    "..ssl.ls..sl.ls..sl.ls..",
+    "..sdddddddddddddddddds..",
+    "..dddddddddddddddddddd.."
+  },
+}
 local BACK_W = 80
 
 local function load(rows)
@@ -351,24 +411,21 @@ end
 local img = {
   token = {load(TOKEN_A), load(TOKEN_B), load(TOKEN_C), load(TOKEN_B)},
   player = load(PLAYER), moon = load(MOON), cloud = load(CLOUD), ramp = load(RAMP), flag = load(FLAG),
-  skins = {}, sticks = {}, back = {}, mapPreview = {},
+  skins = {}, sticks = {}, back = {}, mapIcon = {},
 }
 for i, skin in ipairs(SKINS) do
-  img.skins[i] = {idle = ui.load(skin.sprite, SKIN_P), up = ui.load(crouch(skin.sprite), SKIN_P)}
+  local face = {}
+  for y = 1, 12 do face[y] = skin.sprite[y] end
+  img.skins[i] = {idle = ui.load(skin.sprite, SKIN_P), up = ui.load(crouch(skin.sprite), SKIN_P), face = ui.load(face, SKIN_P)}
 end
 for i, s in ipairs(STICK_ART) do img.sticks[i] = {idle = load(s.idle), swing = load(s.swing)} end
 for i, b in ipairs(BACK) do
   local map = MAPS[i]
-  local pal = {palette = {d = map.d, s = map.s, l = map.l, c = map.c}}
-  img.back[i] = ui.load(b, pal)
-  local thumb = {}
-  for y, row in ipairs(b) do
-    local pixels = {}
-    for x = 4, 70, 2 do pixels[#pixels + 1] = row:sub(x, x) end
-    thumb[y] = table.concat(pixels)
-  end
-  img.mapPreview[i] = ui.load(thumb, pal)
+  img.back[i] = ui.load(b, {palette = {d = map.d, s = map.s, l = map.l, c = map.c}})
+  img.mapIcon[i] = ui.load(MAP_ICON[i], {palette = {d = "purple", s = "green", l = "dim", c = map.c}})
 end
+BACK = nil
+MAP_ICON = nil
 
 ------------------------------------------------------------------ ui
 ui.bg("bg")
@@ -717,12 +774,11 @@ local function draw()
   local map = MAPS[mapIdx]
   if S.mode == "title" then
     cv:clear("bg")
-    cv:rect(0, 11, CW, 22, map.menu)
-    -- A quiet London scene beside the selected character.
-    cv:rect(2, 12, 36, 20, map.sky)
-    cv:image(img.mapPreview[mapIdx], 3, 14)
-    cv:rect(42, 12, 36, 20, 0xEBE8E2)
-    cv:image(img.skins[skinIdx][fl(previewT * 5) % 2 == 0 and "idle" or "up"], 52, 13)
+    -- Transparent landmark emblem, not a city screenshot or boxed skyline.
+    cv:image(img.mapIcon[mapIdx], 8, 14)
+    -- Only the face appears on the menu; the full sprite stays in the run.
+    cv:rect(50, 13, 20, 18, map.menu)
+    cv:image(img.skins[skinIdx].face, 52, 16 + fl(previewT * 5) % 2)
     return
   end
   cv:clear(map.sky)

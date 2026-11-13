@@ -1,7 +1,7 @@
 """Approximate 320x218 menu composition study; not an emulator screenshot."""
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
-from map_art import MAPS, COLORS, scene
+from map_art import MAPS, COLORS, icon
 from character_art import sprite, PALETTE
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -33,14 +33,11 @@ for theme in range(2):
   purple=(103,68,165) if theme==0 else (188,163,247)
   im=Image.new('RGB',(320,218),bg);d=ImageDraw.Draw(im)
   c=COLORS[i]
-  d.rectangle((0,44,319,131),fill=col(c['menu']))
-  d.rectangle((8,48,151,127),fill=col(c['sky']))
-  d.rectangle((168,48,311,127),fill=(235,232,226))
-  rows=scene(mapname)
-  thumb=[''.join(row[x-1] for x in range(4,71,2)) for row in rows]
-  tile(im,thumb,c,12,56)
+  icon_pal={'d':purple,'s':(72,174,148),'l':muted,'c':(219,175,103)}
+  tile(im,icon(mapname),icon_pal,32,56)
+  d.rectangle((200,52,279,123),fill=col(c['menu']))
   name=['DUCK','PONYTAIL DEV','VALIDATOR'][i]
-  tile(im,sprite(name),PALETTE,208,52)
+  tile(im,sprite(name)[:12],PALETTE,208,64)
   d=ImageDraw.Draw(im)
   center(d,'SOL TO THE MOON',4,f(27,True),ink)
   center(d,'MAP',36,f(11,True),muted,0,160)
@@ -51,5 +48,5 @@ for theme in range(2):
   d.rounded_rectangle((74,175,246,203),radius=6,fill=(72,174,148))
   center(d,'SELECT  PLAY',178,f(20,True),(255,255,255))
   out.paste(im,(i*320,theme*218))
-out.save(ROOT/'shots'/'menu_maps_study.png')
-print(ROOT/'shots'/'menu_maps_study.png')
+out.save(ROOT/'shots'/'menu_final_study.png')
+print(ROOT/'shots'/'menu_final_study.png')
