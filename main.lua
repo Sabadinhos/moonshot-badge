@@ -28,9 +28,15 @@ local fl = math.floor
 
 ------------------------------------------------------------------ stages
 local STAGES = {
-  {name = "INTELLIGENCE SUMMIT", sub = "stage 1", sky = 0x0D0D14, ground = 0x1C1C2A},
-  {name = "SCALE OR DIE",        sub = "stage 2", sky = 0x0D1016, ground = 0x1A2228},
-  {name = "BREAKPOINT",          sub = "stage 3", sky = 0x120D18, ground = 0x221A2E},
+  {name = "INTELLIGENCE SUMMIT", sub = "stage 1"},
+  {name = "SCALE OR DIE",        sub = "stage 2"},
+  {name = "BREAKPOINT",          sub = "stage 3"},
+}
+-- A map changes the scenery, not the three-swing progression.
+local MAPS = {
+  {name = "WESTMINSTER", sky = 0x171720, ground = 0x302B39, menu = 0xE8E2EB, d = 0x51485F, s = 0x80738B, l = 0x363847, c = 0xD8B984},
+  {name = "TOWER BRIDGE", sky = 0x15242B, ground = 0x293D44, menu = 0xE0ECEF, d = 0x4B6973, s = 0x829DA4, l = 0x2A4A55, c = 0xD8B984},
+  {name = "COVENT GARDEN", sky = 0x251E28, ground = 0x403139, menu = 0xF0E8E4, d = 0x66535F, s = 0x9D818B, l = 0x503C49, c = 0xD8B984},
 }
 
 ------------------------------------------------------------------ sticks
@@ -275,37 +281,67 @@ local CLOUD = {"...ssss...", ".ssssssss.", "ssssssssss"}
 local RAMP = {".....e", "...eee", ".eeeee"}
 local FLAG = {"mmm", "mm.", "m..", "m..", "m.."}
 
--- stage backdrops: a 46 px strip each, tiled at parallax 0.3 on the horizon
+-- Classic London strips: 80x17, tiled at parallax 0.3 (source: scripts/map_art.py)
 local BACK = {
-  { -- Intelligence Summit: antenna towers, domes, circuit trace
-    "....d.........dd..........d........d..........",
-    "....d....dddd.dd.....d....d....d...d.....ddd..",
-    "...ddd..dddddddd....ddd..ddd..ddd.ddd...ddddd.",
-    "...ddd.dddddddddd...ddd..ddd..ddd.ddd..ddddddd",
-    "..dddddddddddddddddddddddddddddddddddddddddddd",
-    "dddddddddddddddddddddddddddddddddddddddddddddd",
-    "d.c.d.c.c.d.c.d.c.c.c.d.c.d.c.c.d.c.c.d.c.d.c.",
+  { -- WESTMINSTER
+    "..................s.............................................................",
+    "..................dd............................................................",
+    "..................dd............................................................",
+    ".................dddd...........................................................",
+    ".................dddd...........................................................",
+    "...............dddddddd.........................................................",
+    "...............dddddddd.........................................................",
+    "...............dsddddsd.........................................................",
+    "...............dsddcdsd......................................lll................",
+    "...............dssssssd......................................lll................",
+    "..ddddddddddd..dddddddd...ddddddddddddddddd..............lllllllllll............",
+    "..ssdddssdddss.ddssdsdds..dssdddssdddssdddss...ss........lllllllllll............",
+    "dddddddddddddddddssdsdddddddddddddddddddddddddddddd......lllllllllll............",
+    "dddsddddsddddsdddssdsddsddddsddddsddddsddddsddddsddlllllllllllllllllllllllll....",
+    "dddsddddsddddsdddssdsddsddddsddddsddddsddddsddddsddlllllllllllllllllllllllll....",
+    "dddddddddddddddddssdsddddddddddddddddddddddddddddddlllllllllllllllllllllllll....",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddlllllllllllllllllllllllll...."
   },
-  { -- Scale or Die: bar chart skyline climbing to the right
-    "..........................................dddd",
-    "....................................dddd..dddd",
-    "..............................dddd..dddd..dddd",
-    "........................dddd..dddd..dddd..dddd",
-    "..................dddd..dddd..dddd..dddd..dddd",
-    "............dddd..dddd..dddd..dddd..dddd..dddd",
-    "......dddd..dddd..dddd..dddd..dddd..dddd..dddd",
+  { -- TOWER BRIDGE
+    ".................ss...........................................ss................",
+    "................dddd.........................................dddd...............",
+    "................dddd.........................................dddd...............",
+    "...............dddddd.......................................dddddd..............",
+    "...............dddddd.......................................dddddd..............",
+    "..............dddddddd.....................................dddddddd.............",
+    "..............dddddddd.....................................dddddddd.............",
+    "..............ddssdsdd..............s...s...s...s..........ddssdsdd.............",
+    "..............ddssdsdd......s...s...s...s...s...s...s...s..ddssdsdd.............",
+    "..............dddddddd.ssssssssssssssssssssssssssssssssssssdddddddd.............",
+    "..............dddddddd.dddddddddddddddddddddddddddddddddddddddddddd.............",
+    "..............dddddddd.dddddddddddddddddddddddddddddddddddddddddddd.............",
+    "........ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd.......",
+    "........ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd.......",
+    "....llllllllllddddddddlllllllllllllllllllllllllllllllllllllddddddddllllllllll...",
+    "....lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll...",
+    "ssssllllssssllllssssllllssssllllssssllllssssllllssssllllssssllllssssllllssssl..."
   },
-  { -- Breakpoint, London: Big Ben, the Eye, the Gherkin, the Shard
-    "...........d.........................d........",
-    "..........dyd.......ddddd............d........",
-    "..........ddd......dd...dd..........ddd...ddd.",
-    "..........ddd.....dd.....dd..d......ddd..ddddd",
-    ".......dd.ddd.dd..d...d...d.dd.....ddddd.ddddd",
-    "....dd.dd.ddd.dd..dd..d..dd.dd.dd.dddddddddddd",
-    "dddddddddddddddddddddddddddddddddddddddddddddd",
+  { -- COVENT GARDEN
+    ".....................................ssssss.....................................",
+    "...................................dddddddddd...................................",
+    "............lllll..................dddddddddd.................llllll............",
+    "..........ddllllldddddddddddddddddddddddddddddddddddddddddddddlllllldd..........",
+    "..........dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd..........",
+    ".....ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss.....",
+    ".....ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss.....",
+    ".....dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd.....",
+    ".....dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd.....",
+    ".........ss....sssss.....ss....sssss.....ss....sssss.....ss....sssss.....ss.....",
+    ".........ss...lllllll....ss...lllllll....ss...lllllll....ss...lllllll....ss.....",
+    ".........ss...lldddll....ss...lldddll....ss...lldddll....ss...lldddll....ss.....",
+    ".........ss...lldddll....ss...lldddll....ss...lldddll....ss...lldddll....ss.....",
+    ".ddddddddssdddlldddllddddssdddlldddllddddssdddlldddllddddssdddlldddllddddssdddd.",
+    ".ddddddddssdddlldddllddddssdddlldddllddddssdddlldddllddddssdddlldddllddddssdddd.",
+    ".ddddddddssddddddddddddddssddddddddddddddssddddddddddddddssddddddddddddddssdddd.",
+    ".dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd."
   },
 }
-local BACK_W = 46
+local BACK_W = 80
 
 local function load(rows)
   local ok, i = pcall(ui.load, rows, P)
@@ -315,13 +351,24 @@ end
 local img = {
   token = {load(TOKEN_A), load(TOKEN_B), load(TOKEN_C), load(TOKEN_B)},
   player = load(PLAYER), moon = load(MOON), cloud = load(CLOUD), ramp = load(RAMP), flag = load(FLAG),
-  skins = {}, sticks = {}, back = {},
+  skins = {}, sticks = {}, back = {}, mapPreview = {},
 }
 for i, skin in ipairs(SKINS) do
   img.skins[i] = {idle = ui.load(skin.sprite, SKIN_P), up = ui.load(crouch(skin.sprite), SKIN_P)}
 end
 for i, s in ipairs(STICK_ART) do img.sticks[i] = {idle = load(s.idle), swing = load(s.swing)} end
-for i, b in ipairs(BACK) do img.back[i] = load(b) end
+for i, b in ipairs(BACK) do
+  local map = MAPS[i]
+  local pal = {palette = {d = map.d, s = map.s, l = map.l, c = map.c}}
+  img.back[i] = ui.load(b, pal)
+  local thumb = {}
+  for y, row in ipairs(b) do
+    local pixels = {}
+    for x = 4, 70, 2 do pixels[#pixels + 1] = row:sub(x, x) end
+    thumb[y] = table.concat(pixels)
+  end
+  img.mapPreview[i] = ui.load(thumb, pal)
+end
 
 ------------------------------------------------------------------ ui
 ui.bg("bg")
@@ -332,7 +379,10 @@ local lblDist  = ui.label(0, 150, "", {size = 20, color = "text", w = ui.W, alig
 local lblMsg   = ui.label(0, 60, "", {size = 20, color = "green", w = ui.W, align = "center"})
 local lblSub   = ui.label(0, 88, "", {size = 14, color = "dim", w = ui.W, align = "center"})
 local lblTitle = ui.label(0, 4, "", {size = 32, color = "text", w = ui.W, align = "center"})
-local lblSkin  = ui.label(0, 126, "", {size = 20, color = "purple", w = ui.W, align = "center"})
+local lblMapTag = ui.label(0, 36, "MAP", {size = 12, color = "dim", w = 160, align = "center"})
+local lblHeroTag = ui.label(160, 36, "CHARACTER", {size = 12, color = "dim", w = 160, align = "center"})
+local lblMap = ui.label(0, 128, "", {size = 14, color = "purple", w = 160, align = "center"})
+local lblSkin = ui.label(160, 128, "", {size = 14, color = "purple", w = 160, align = "center"})
 local lblStick = ui.label(0, 154, "", {size = 14, color = "dim", w = ui.W, align = "center"})
 local lblBest  = ui.label(0, 34, "", {size = 12, color = "dim", w = ui.W, align = "center"})
 local playBg   = ui.rect(74, 175, 172, 28, {color = 0x48AE94, radius = 6})
@@ -345,6 +395,8 @@ local popTimer, popY = 0, 20
 local best = storage.get("best") or 0
 local ranks = storage.get("ranks") or {}   -- { {name=, score=}, ... } best first
 local stickIdx = storage.get("stick") or 1
+local mapIdx = storage.get("map") or 1
+if mapIdx < 1 or mapIdx > #MAPS then mapIdx = 1 end
 local skinIdx = storage.get("skin") or 1
 local stage1Done = storage.get("stage1Done") or false
 -- Old roster had Sabadinhos at slot 5; carry existing owners to the new slot.
@@ -421,10 +473,14 @@ local function setupWorld()
   for _, m in ipairs({100, 250, 500, 750}) do flags[#flags + 1] = m end
 end
 
+local function showMap()
+  lblMap:text("UP  " .. MAPS[mapIdx].name)
+end
+
 local function showSkin()
   local sk = SKINS[skinIdx]
   lblSkin:color(sk.unlocked and "purple" or "dim")
-  lblSkin:text("<  " .. sk.name .. "  >")
+  lblSkin:text("< " .. sk.name .. " >")
   lblBest:text("")
 end
 
@@ -450,10 +506,12 @@ local function newRun()
   lblMsg:text(""); lblSub:text(""); lblPop:text(""); popTimer = 0
   lblDist:text("")
   lblTop:text(""); lblWind:text("")
+  lblMapTag:text("MAP"); lblHeroTag:text("CHARACTER")
   showStick()
+  showMap()
   showSkin()
   previewT = 0
-  ui.hint("</> character   DOWN bat   UP ranks")
+  ui.hint("UP map   <> hero   DN bat   SEL play")
   if bar then bar:remove(); bar = nil end
   led.off()
 end
@@ -462,6 +520,7 @@ local function showRanks()
   closeRanks()
   S.mode = "ranks"
   playBg:show(false)
+  lblMapTag:text(""); lblHeroTag:text(""); lblMap:text("")
   lblTitle:text(""); lblSkin:text(""); lblStick:text(""); lblBest:text(""); lblPlay:text("")
   lblMsg:text(""); lblSub:text("")
   local items = {}
@@ -478,6 +537,7 @@ local function startSwing()
   S.swing = S.swing + 1
   S.stage = math.min(S.swing, #STAGES)
   S.mode = "drop"
+  S.map = mapIdx
   playBg:show(false)
   S.wind = fl(rnd(-6, 6) + 0.5)
   S.token = {x = BAT_X + 3, y = -8}
@@ -489,6 +549,7 @@ local function startSwing()
   S.cam = 0
   S.swingAnim = 0
   S.flight = nil
+  lblMapTag:text(""); lblHeroTag:text(""); lblMap:text("")
   lblTitle:text(""); lblSkin:text(""); lblStick:text(""); lblBest:text(""); lblPlay:text(""); lblDist:text("")
   lblTop:text("swing " .. S.swing .. "/" .. SWINGS .. "   total " .. fl(S.total) .. " m")
   local w = S.wind
@@ -653,20 +714,18 @@ end
 
 ------------------------------------------------------------------ draw
 local function draw()
-  local st = STAGES[S.stage or 1]
+  local map = MAPS[mapIdx]
   if S.mode == "title" then
     cv:clear("bg")
-    -- The small portrait stage stays legible in both system themes.
-    cv:rect(19, 11, 42, 20, 0xEBE8E2)
-    cv:line(19, 11, 60, 11, "border")
-    cv:line(19, 30, 60, 30, "border")
-    -- Two cached frames alternate every 200 ms; the second lacks one waist row.
-    cv:image(img.skins[skinIdx][fl(previewT * 5) % 2 == 0 and "idle" or "up"], 32, 12)
-    cv:pixel(26, fl(14 + math.sin(previewT * 3) * 2), "green")
-    cv:pixel(53, fl(17 + math.sin(previewT * 2) * 2), "purple")
+    cv:rect(0, 11, CW, 22, map.menu)
+    -- A quiet London scene beside the selected character.
+    cv:rect(2, 12, 36, 20, map.sky)
+    cv:image(img.mapPreview[mapIdx], 3, 14)
+    cv:rect(42, 12, 36, 20, 0xEBE8E2)
+    cv:image(img.skins[skinIdx][fl(previewT * 5) % 2 == 0 and "idle" or "up"], 52, 13)
     return
   end
-  cv:clear(st.sky)
+  cv:clear(map.sky)
   local cam = S.cam or 0
   -- moon (parallax 0.5)
   local mx = MOON_X * 0.5 - cam * 0.5 + 40
@@ -678,12 +737,12 @@ local function draw()
   end
   -- stage backdrop strip, tiled, parallax 0.3
   local bx = -fl((cam * 0.3) % BACK_W)
-  local back = img.back[S.stage or 1]
-  cv:image(back, bx, GROUND - 7)
-  cv:image(back, bx + BACK_W, GROUND - 7)
-  -- ground
-  cv:rect(0, GROUND, CW, CH - GROUND, st.ground)
-  cv:line(0, GROUND, CW - 1, GROUND, 0x3B2F70)
+  local back = img.back[mapIdx]
+  cv:image(back, bx, GROUND - 17)
+  cv:image(back, bx + BACK_W, GROUND - 17)
+  -- subdued foreground keeps characters and flying token readable
+  cv:rect(0, GROUND, CW, CH - GROUND, map.ground)
+  cv:line(0, GROUND, CW - 1, GROUND, map.s)
   local first = fl(cam / 50) * 50
   for m = first, first + CW + 50, 50 do
     local x = m - cam
@@ -775,7 +834,7 @@ function on_key(k, rep)
       local nextStick = stickIdx % #STICKS + 1
       while not stickUnlocked(nextStick) do nextStick = nextStick % #STICKS + 1 end
       stickIdx = nextStick; storage.set("stick", stickIdx); showStick()
-    elseif k == "up" then showRanks()
+    elseif k == "up" then mapIdx = mapIdx % #MAPS + 1; storage.set("map", mapIdx); showMap()
     elseif k == "select" then
       if not SKINS[skinIdx].unlocked then ui.toast("Clear stage 1 to unlock"); return true end
       if not stickUnlocked(stickIdx) then ui.toast("Locked: reach " .. STICKS[stickIdx].unlock .. " m"); return true end

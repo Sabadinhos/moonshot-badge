@@ -10,12 +10,15 @@ Ten original 16×18 logical-pixel sprites, shown at 4× (64×72 screen pixels): 
 
 Native `ui.label` supports sizes 12/14/20/32 and `mono`, but no arbitrary font-family. The menu uses built-in ABC Diatype labels and theme colors. Idle sprites alternate between two cached frames every 200 ms: the second removes one waist row, lifting the feet by one canvas pixel. No GIF decoder, file reads or per-frame image loading.
 
+The menu places the map preview on the left and the character on the right. Three original, restrained London pixel backdrops (Westminster, Tower Bridge, Covent Garden) use the characters' muted lavender/seafoam/warm-neutral palette. Their 80×17 parallax strips and 34×17 menu thumbnails are cached at startup. Art source: `scripts/map_art.py`; `shots/map_study.png` is a generated design study, not a badge screenshot.
+
 ## Controls
 
 - SELECT: start immediately; during the run hold for charge and release to swing
-- LEFT / RIGHT (menu): cycle unlocked skins
+- LEFT / RIGHT (menu): cycle unlocked characters in the right-hand panel
+- UP (menu): cycle maps in the left-hand panel (Westminster, Tower Bridge, Covent Garden); the preview and in-game skyline, sky, and ground switch together. Each run still has the same three swings.
 - DOWN (menu): cycle sticks (Brolly, Big Ben, Ledger; the last two unlock by best score)
-- UP (menu or end screen): local top-five rank board
+- UP (end screen): local top-five rank board
 - CANCEL: back to menu / exit
 
 ## Test and transfer

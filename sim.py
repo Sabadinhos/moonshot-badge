@@ -28,10 +28,18 @@ random.seed(1)
 assert state() == "title"
 assert any(x == ("label", "SOL TO THE MOON") for x in log), "new title must render immediately"
 assert store.get("stage1Done") is None
+G.on_key("up", False)
+assert store.get("map") == 2, "UP should cycle map without starting the game"
+G.on_key("up", False); assert store.get("map") == 3
+G.on_key("up", False); assert store.get("map") == 1, "map selection must wrap"
+G.on_key("up", False); assert store.get("map") == 2
+assert any(x == ("label", "UP  COVENT GARDEN") for x in log)
+tick(2)  # exercise the preview renderer after switching maps
 G.on_key("left", False)  # wraps past the hidden skin
 assert store.get("skin") == 9, "hidden skin must be skipped before stage 1 is done"
 G.on_key("down", False); assert store.get("stick") == 1, "locked bat must be skipped"
 G.on_key("select", False); assert state() == "drop", state()
+assert G._S.map == 2, "selected scene must carry into gameplay"
 results = [play_swing(29), play_swing(20), play_swing(45)]
 assert store.get("stage1Done") is True, "Sabadinhos skin should unlock after stage 1"
 G.on_key("back", False); assert state() == "title"
@@ -46,16 +54,15 @@ print("labels:", [x[1] for x in log if x[0] == "label"][-8:])
 G.on_key("select", False); assert state() == "drop"
 r2 = [play_swing(29) for _ in range(3)]
 print("run2:", r2, "mode:", state(), "awards:", awards)
-G.on_key("back", False); print("after back:", state())
-assert state() == "title"
-print("OK")
-
-# ranks + sticks
+assert state() == "end"
 G.on_key("up", False); assert state() == "ranks", state()
 print("rank list:", [x for x in log if x[0] == "list"][-1])
 G.on_key("back", False); assert state() == "title"
-G.on_key("right", False); print("stick:", store.get("stick"), [x[1] for x in log if x[0]=="label"][-1])
-G.on_key("right", False); print("stick:", store.get("stick"), [x[1] for x in log if x[0]=="label"][-1])
+print("OK")
+
+# bats remain a separate DOWN action on the title screen
+G.on_key("down", False); print("stick:", store.get("stick"), [x[1] for x in log if x[0]=="label"][-1])
+G.on_key("down", False); print("stick:", store.get("stick"), [x[1] for x in log if x[0]=="label"][-1])
 G.on_key("select", False); print("mode after select on stick 3 (best=%s):" % store.get("best"), state())
 print("ranks stored:", store.get("ranks") and [dict(v.items()) for v in store.get("ranks").values()])
 print("OK2")
