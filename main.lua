@@ -498,17 +498,7 @@ local function showModal(visible)
   modalTitle:show(visible); modalHelp:show(visible)
 end
 showModal(false)
--- Broad colour panels cross the scene in 140 ms; thin rails looked like a glitch.
--- Create them after the labels so the wipe is in front of the scene.
-local sweep = ui.rect(-240, 0, 160, ui.H, {color = 0x9945FF})
-local sweepEdge = ui.rect(-80, 0, 80, ui.H, {color = 0x14F195})
-sweep:show(false); sweepEdge:show(false)
-local sweepT, modalT = 0, 0
-local function swipe()
-  sweepT = 0.14
-  sweep:pos(-240, 0); sweepEdge:pos(-80, 0)
-  sweep:show(true); sweepEdge:show(true)
-end
+local modalT = 0
 local bar, rankList = nil, nil
 local popTimer, popY = 0, 20
 
@@ -569,7 +559,6 @@ local function modal(mode, from)
   S.mode = mode
   S.quitFrom = from
   modalT = 0
-  sweepT = 0; sweep:show(false); sweepEdge:show(false)
   modalTitle:text(mode == "pause" and "PAUSED" or "QUIT GAME?")
   modalHelp:text(mode == "pause" and "SELECT RESUME   v MENU   > QUIT" or "SELECT STAY   RIGHT EXIT")
   showModal(true)
@@ -673,7 +662,6 @@ local function newRun()
   ui.hint("<> map   UP/DN hero   SELECT play")
   if bar then bar:remove(); bar = nil end
   led.off()
-  swipe()
 end
 
 local function showRanks(broadcast)
@@ -709,7 +697,7 @@ local function showRanks(broadcast)
   cvMenu:show(false); cvPlay:show(false)
   rankList = ui.list(20, 8, 280, 184, items)
   ui.hint("You + met badges running this app   CANCEL")
-  if broadcast ~= false then swipe(); shareBest() end
+  if broadcast ~= false then shareBest() end
 end
 
 local function startSwing()
@@ -747,7 +735,6 @@ local function startSwing()
   bar:set(0)
   ui.hint("release SELECT, then press + hold")
   led.off()
-  swipe()
 end
 
 local function beginDrop()
@@ -772,7 +759,6 @@ end
 
 local function endRun()
   S.mode = "end"
-  swipe()
   useCanvas(false)
   local total = fl(S.total)
   local isBest = total > best
@@ -1035,12 +1021,6 @@ end
 ------------------------------------------------------------------ loop
 function on_tick(ms)
   local dt = math.min(ms, 80) / 1000
-  if sweepT > 0 then
-    sweepT = math.max(0, sweepT - dt)
-    local x = fl(-240 + (ui.W + 240) * (1 - sweepT / 0.14))
-    sweep:pos(x, 0); sweepEdge:pos(x + 160, 0)
-    if sweepT == 0 then sweep:show(false); sweepEdge:show(false) end
-  end
   if S.mode == "pause" or S.mode == "quit" then
     -- Keep physics, scoring, charge, confetti and the scene itself frozen.
     modalT = math.min(0.14, modalT + dt)
