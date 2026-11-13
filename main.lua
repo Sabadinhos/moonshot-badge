@@ -44,107 +44,214 @@ local STICKS = {
 ------------------------------------------------------------------ skins
 -- Original 16x18 sprites: readable silhouettes at 4x (64x72 physical pixels).
 local SKINS = {
-  {name = "BASE CHARACTER", unlocked = true, sprite = {
+  {name = "DUCK", unlocked = true, sprite = {
+    "......ccc.......",
+    "......ccc.......",
+    "....cccccccc....",
+    "....cwwwwwwc....",
+    "...cccccccccc...",
+    "...cccccccccc...",
+    "...cccccccccc...",
+    "...ciiccciicc...",
+    "...cccccccccc...",
+    "...ccoooooocc...",
+    "....ccoooocc....",
     "................",
-    "................",
-    "....kcccccck....",
-    "....kcccccck....",
-    "....kkkkkkkk....",
-    "...khhhhhhhhk...",
-    "...khhhhhhhhk...",
-    "...khkkhhhkkk...",
-    "...khkkhhhkkk...",
-    "...khhhhhhhhk...",
-    "...khhhkkkhhk...",
-    "...kkkkkkkkkk...",
-    "...kggggggggk...",
-    "..kkkgeeeegkkk..",
-    "..kkkgeeeegkkk..",
-    "..kkkgeeeegkkk..",
-    "...kgkkggkkgk...",
-    "...kkkkkkkkkk..."
+    "....aavvvvaa....",
+    "...AAavvvvaAA...",
+    "...AAaaaaaaAA...",
+    "...AAaaaaaaAA...",
+    "....aaaaaaaa....",
+    ".....oo..oo....."
   }},
   {name = "CUTE ANIMAL", unlocked = true, sprite = {
-    ".kkkk......kkkk.",
-    ".kppk......kppk.",
-    ".kppk......kppk.",
-    ".kpkkkkkkkkkkpk.",
-    ".kkooooooooookk.",
-    "..kooooooooook..",
-    "..ooowkooowkoo..",
-    "..oookkoookkoo..",
-    "..oookkoookkoo..",
-    "..oowwwkkwwwoo..",
-    "...owwpwwpwwo...",
-    "...kwwwwwwwwk...",
-    "....kooooook....",
-    "..kkkowwwwokkk..",
-    "..kkkowwwwokkkw.",
-    "....kowwwwokooo.",
-    "....kkkkkkkk....",
-    ".....kk..kk....."
+    "..ooo......ooo..",
+    "..oso......oso..",
+    "..oso......oso..",
+    "..osooooooooso..",
+    "..oooooooooooo..",
+    "..oooooooooooo..",
+    "..ooowoooowooo..",
+    "..oooiooooiooo..",
+    "..occcooooccco..",
+    "..occcohhoccco..",
+    "...cccccccccc...",
+    "................",
+    "....aaccccaa....",
+    "...AAaccccaAA.cc",
+    "...AAaaaaaaAA.cc",
+    "...AAaaaaaaAooo.",
+    "....aaaaaaaa....",
+    ".....VV..VV....."
   }},
   {name = "BEANIE DEGEN", unlocked = true, sprite = {
-    "...kkkkkkkkkk...",
-    "...kbbbbbbbbk...",
-    "...kbbbeebbbk...",
-    "...kbbbeebbbk...",
-    "...kbbbbbbbbk...",
-    "...kkkkkkkkkk...",
-    "...kyyyyyyyyk...",
-    "...kyyyyyyyyk...",
-    "...kykekykekk...",
-    "...kyyyyyyyyk...",
-    "...kyyykkkyyk...",
-    "...kkkkkkkkkk...",
-    "...kbbccccbbk...",
-    "..kkkbccccbkkk..",
-    "..kkkbbbbbbkkk..",
-    "..kkkbbbbbbkkk..",
-    "...kkkkkkkkkk...",
-    "...kkkkkkkkkk..."
+    "....VVVVV.......",
+    "...vVVVVVvvv....",
+    "...vvvvvvvvv....",
+    "..vvvvvvvvvvv...",
+    "..vvvvvvvvvvv...",
+    "..vVVVVVVVVVV...",
+    "...VVVVVVVVVV...",
+    "....fwffffwf....",
+    "...sfiffffifs...",
+    "...sffffffffs...",
+    "....fffiffff....",
+    "........s.......",
+    "....aaavvaaa....",
+    "...AAaVVVVaAA...",
+    "...AAaVVVVaAA...",
+    "...AAaaaaaaAA...",
+    "....aaaaaaaa....",
+    ".....VV..VV....."
   }},
   {name = "SENIOR DEV", unlocked = true, sprite = {
+    "....wwww........",
+    "...gwwwwggg.....",
+    "...gggggggggg...",
+    "...gggggggggg...",
+    "...ggggggggff...",
+    "...ffffffffff...",
+    "...gfffffffff...",
+    "...gVwVVVVwVf...",
+    "...gfiffffiff...",
+    "...ffffffffff...",
+    "...ffggggggff...",
+    "......gggg......",
+    "....accaacca....",
+    "...AAccVVccAA...",
+    "...AAccVVccAA...",
+    "...AAaaVVaaAA...",
+    "....aaaaaaaa....",
+    ".....VV..VV....."
+  }},
+  {name = "PONYTAIL DEV", unlocked = true, sprite = {
     "................",
-    "...kssssssssk...",
-    "...kssssssssk...",
-    "...kssssssssk...",
-    "...kwwwwwwwwk...",
-    "...kttttttttk...",
-    "...kttttttttk...",
-    "...kkkkktkkkk...",
-    "...kkeekkkeek...",
-    "...kkkkktkkkk...",
-    "...kttstttstk...",
-    "...kkkssssskk...",
-    "...ksskkkkssk...",
-    "..kkkskeekskkk..",
-    "..kkkskeekskkk..",
-    "..kkkskeekskkk..",
-    "...kskkkkkksk...",
-    "...kkkkkkkkkk..."
+    "....hhhhhhhh....",
+    "....hhhhhhhh....",
+    "....hhhhhhhhhhh.",
+    "....dddddfffhhh.",
+    "....dddddfffhddd",
+    "...hhhffffff.ddd",
+    "...hfwffffwf.ddd",
+    "...hfiffffif.ddd",
+    "...hffffffff.hhd",
+    "....fffssfff.hh.",
+    ".............hh.",
+    "....aavvvvaa....",
+    "...AAavvvvaAA...",
+    "...AAaaaaaaAA...",
+    "...AAaaaaaaAA...",
+    "....aaaaaaaa....",
+    ".....VV..VV....."
+  }},
+  {name = "BOB BUILDER", unlocked = true, sprite = {
+    "................",
+    "....hhhhhhh.....",
+    "...dhhhhhhhdd...",
+    "...dhhhhhhhdd...",
+    "...dhhhhffffd...",
+    "...dffffffffd...",
+    "...ddffffffhh...",
+    "...ddwffffwhh...",
+    "...ddiffffihh...",
+    "...ddffffffhh...",
+    "...ddffssfffd...",
+    "...dd.....w.....",
+    "....aaaaaava....",
+    "...AAaaaaavAA...",
+    "...AAaaaaavAA...",
+    "...AAaaaaaaAA...",
+    "....aaaaaaaa....",
+    ".....VV..VV....."
+  }},
+  {name = "VALIDATOR", unlocked = true, sprite = {
+    "................",
+    "................",
+    "....hhhhhhhh....",
+    "....hhhhhhhhhh..",
+    "....hhhhhhmmhh..",
+    "...dmmmmmmmmhh..",
+    "...dmmmmmmmmhh..",
+    "...dmimmmmimdd..",
+    "...dvimmmmimdd..",
+    "...dAmmmmmmmdd..",
+    "...dmmmMMmmmdd..",
+    "...d........dd..",
+    "....aavvvvaadd..",
+    "...AAavvvvaAA...",
+    "...AAaaaaaaAA...",
+    "...AAaaaaaaAA...",
+    "....aaaaaaaa....",
+    ".....VV..VV....."
+  }},
+  {name = "ONCHAIN ARTIST", unlocked = true, sprite = {
+    "....hhhhh.......",
+    "....hhhhh.dddd..",
+    "...hhhhhhhdwdd..",
+    "...hhhhhhhvvvd..",
+    "..hhhhhhhhdddd..",
+    "..hhnnnnnnnnh...",
+    "..hhnnnnnnnnh...",
+    "..hhninnnnin....",
+    "..hNninnnnin....",
+    "...Nnnnnnnnn....",
+    "....nnNnnNnn....",
+    "................",
+    "....aaaaaaaa....",
+    "...vvaaaaaaAA...",
+    "...cAaaaaaaAA...",
+    "...AAaaaaaaAA...",
+    "....aaaaaaaa....",
+    ".....VV..VV....."
+  }},
+  {name = "DAO SCOUT", unlocked = true, sprite = {
+    ".........hhh....",
+    "....dddd.hhh....",
+    "...hddddhhhhh...",
+    "...hddddhhhhh...",
+    "...hAaaaaaaAA...",
+    "...mAAAAAAAAA...",
+    "...mmmmmmmmmm...",
+    "...mmimmmmimm...",
+    "...mmimmmmimm...",
+    "...mmmmmmmmmm...",
+    "...mmmmMMmmmm...",
+    "................",
+    "....aaaaaaaa....",
+    "...AAaaaawvAA...",
+    "...AAaaaavvAA...",
+    "...AAaaaaaaAA...",
+    "....aaaaaaaa....",
+    ".....VV..VV....."
   }},
   {name = "SABADINHOS", unlocked = false, sprite = {
-    "....kkkkkkkk....",
-    "..kkkskkkkkskk..",
-    "..kskkkkskkkkk..",
-    "..kkkkkkkkkkkk..",
-    ".kkkskkkkkkkksk.",
-    ".kkkhhhhhhhhkkk.",
-    ".kskhhhhhhhhkkk.",
-    ".kkhrrrrhrrrrkk.",
-    ".kkhrwkrrrwkrkk.",
-    "..khrrrrhrrrrk..",
-    "..khhhttttthhk..",
-    "..kkhhhwwwwhkk..",
-    "...kksssssskk...",
-    "..kkksssssskkk..",
-    "..kkksssssskkk..",
-    "..kkkkkkkkkkkk..",
-    "...kkkkkkkkkk...",
-    "...kkkkkkkkkk..."
+    ".......dd.......",
+    "...hddhddhddh...",
+    "...hddhhhhddh...",
+    "..hhhhhhhddhdd..",
+    "..hhhddhhddhdd..",
+    "..hdffffffffhh..",
+    "..hdffffffffdh..",
+    "..hsrrrrfrrrrh..",
+    "..hsrwirrrwirh..",
+    "..hsriirfriirh..",
+    "....ffsssssf....",
+    ".......www......",
+    "....aaaaaaaa....",
+    "...AAaVVVVaAA...",
+    "...AAaVVVVaAA...",
+    "...AAaaaaaaAA...",
+    "....aaaaaaaa....",
+    ".....VV..VV....."
   }},
 }
+local SKIN_P = {palette = {["i"] = 0x2D283D, ["h"] = 0x43344F, ["d"] = 0x695270, ["f"] = 0xF4C7A4, ["s"] = 0xD6987F, ["m"] = 0xBC7D5E, ["M"] = 0x915746, ["n"] = 0x7F5246, ["N"] = 0x5C3938, ["c"] = 0xFFEACF, ["a"] = 0x65C1AF, ["A"] = 0x378891, ["v"] = 0x8070B1, ["V"] = 0x574C84, ["o"] = 0xE9A06F, ["r"] = 0xDC5963, ["g"] = 0xB0B5BC, ["w"] = 0xFAF8E8}}
+-- Alternate idle frame removes one waist row; feet rise by one canvas pixel.
+local function crouch(rows)
+  local frame = {}
+  for y = 1, #rows do if y ~= 13 then frame[#frame + 1] = rows[y] end end
+  return frame
+end
 ------------------------------------------------------------------ art
 local P = {palette = {d = 0x2A2A3A, s = 0x6B6B80, h = 0xFFF7B0, c = 0x3B2F70, e = 0x14F195, n = 0x0D0D14, r = 0xC8102E, t = 0x8A7A5A, g = 0x64D99A, w = 0xF5F1E8, p = 0xE9A8D4, b = 0x6938EF, k = 0x15121D, y = 0xD7A84B}}
 
@@ -210,7 +317,9 @@ local img = {
   player = load(PLAYER), moon = load(MOON), cloud = load(CLOUD), ramp = load(RAMP), flag = load(FLAG),
   skins = {}, sticks = {}, back = {},
 }
-for i, skin in ipairs(SKINS) do img.skins[i] = load(skin.sprite) end
+for i, skin in ipairs(SKINS) do
+  img.skins[i] = {idle = ui.load(skin.sprite, SKIN_P), up = ui.load(crouch(skin.sprite), SKIN_P)}
+end
 for i, s in ipairs(STICK_ART) do img.sticks[i] = {idle = load(s.idle), swing = load(s.swing)} end
 for i, b in ipairs(BACK) do img.back[i] = load(b) end
 
@@ -223,9 +332,11 @@ local lblDist  = ui.label(0, 150, "", {size = 20, color = "text", w = ui.W, alig
 local lblMsg   = ui.label(0, 60, "", {size = 20, color = "green", w = ui.W, align = "center"})
 local lblSub   = ui.label(0, 88, "", {size = 14, color = "dim", w = ui.W, align = "center"})
 local lblTitle = ui.label(0, 4, "", {size = 32, color = "text", w = ui.W, align = "center"})
-local lblSkin  = ui.label(0, 128, "", {size = 20, color = "purple", w = ui.W, align = "center"})
-local lblStick = ui.label(0, 158, "", {size = 14, color = "dim", w = ui.W, align = "center"})
-local lblBest  = ui.label(0, 184, "", {size = 12, color = "dim", w = ui.W, align = "center"})
+local lblSkin  = ui.label(0, 126, "", {size = 20, color = "purple", w = ui.W, align = "center"})
+local lblStick = ui.label(0, 154, "", {size = 14, color = "dim", w = ui.W, align = "center"})
+local lblBest  = ui.label(0, 34, "", {size = 12, color = "dim", w = ui.W, align = "center"})
+local playBg   = ui.rect(74, 175, 172, 28, {color = 0x48AE94, radius = 6})
+local lblPlay  = ui.label(0, 178, "", {size = 20, color = 0xFFFFFF, w = ui.W, align = "center"})
 local lblPop   = ui.label(0, 20, "", {size = 32, color = "green", w = ui.W, align = "center"})
 local bar, rankList = nil, nil
 local popTimer, popY = 0, 20
@@ -236,6 +347,11 @@ local ranks = storage.get("ranks") or {}   -- { {name=, score=}, ... } best firs
 local stickIdx = storage.get("stick") or 1
 local skinIdx = storage.get("skin") or 1
 local stage1Done = storage.get("stage1Done") or false
+-- Old roster had Sabadinhos at slot 5; carry existing owners to the new slot.
+if (storage.get("skinRoster") or 1) < 2 then
+  if skinIdx == 5 and stage1Done then skinIdx = #SKINS; storage.set("skin", skinIdx) end
+  storage.set("skinRoster", 2)
+end
 if skinIdx < 1 or skinIdx > #SKINS or (skinIdx == #SKINS and not stage1Done) then skinIdx = 1 end
 SKINS[#SKINS].unlocked = stage1Done
 local previewT = 0
@@ -309,7 +425,7 @@ local function showSkin()
   local sk = SKINS[skinIdx]
   lblSkin:color(sk.unlocked and "purple" or "dim")
   lblSkin:text("<  " .. sk.name .. "  >")
-  lblBest:text(sk.unlocked and ("best " .. fl(best) .. " m") or "Finish stage 1 to unlock")
+  lblBest:text("")
 end
 
 local function closeRanks()
@@ -329,14 +445,15 @@ local function newRun()
   S.tokenFrame = 0
   S.stage = 1
   setupWorld()
-  lblTitle:pos(0, 4); lblTitle:text("Moon Shot")
+  lblTitle:pos(0, 4); lblTitle:text("SOL TO THE MOON")
+  playBg:show(true); lblPlay:text("SELECT  PLAY")
   lblMsg:text(""); lblSub:text(""); lblPop:text(""); popTimer = 0
   lblDist:text("")
   lblTop:text(""); lblWind:text("")
   showStick()
   showSkin()
   previewT = 0
-  ui.hint("SELECT play   </> skin   DOWN bat   UP ranks")
+  ui.hint("</> character   DOWN bat   UP ranks")
   if bar then bar:remove(); bar = nil end
   led.off()
 end
@@ -344,7 +461,8 @@ end
 local function showRanks()
   closeRanks()
   S.mode = "ranks"
-  lblTitle:text(""); lblSkin:text(""); lblStick:text(""); lblBest:text("")
+  playBg:show(false)
+  lblTitle:text(""); lblSkin:text(""); lblStick:text(""); lblBest:text(""); lblPlay:text("")
   lblMsg:text(""); lblSub:text("")
   local items = {}
   for i = 1, RANKS do
@@ -360,9 +478,10 @@ local function startSwing()
   S.swing = S.swing + 1
   S.stage = math.min(S.swing, #STAGES)
   S.mode = "drop"
+  playBg:show(false)
   S.wind = fl(rnd(-6, 6) + 0.5)
   S.token = {x = BAT_X + 3, y = -8}
-  S.wait = 1.0           -- stage card before the drop
+  S.wait = 0.65          -- enough time to read the stage, then immediate action
   S.trail = {}
   S.power = 0
   S.charging = false
@@ -370,7 +489,7 @@ local function startSwing()
   S.cam = 0
   S.swingAnim = 0
   S.flight = nil
-  lblTitle:text(""); lblSkin:text(""); lblStick:text(""); lblBest:text(""); lblDist:text("")
+  lblTitle:text(""); lblSkin:text(""); lblStick:text(""); lblBest:text(""); lblPlay:text(""); lblDist:text("")
   lblTop:text("swing " .. S.swing .. "/" .. SWINGS .. "   total " .. fl(S.total) .. " m")
   local w = S.wind
   local arrow = w > 0 and ">" or (w < 0 and "<" or "=")
@@ -538,11 +657,11 @@ local function draw()
   if S.mode == "title" then
     cv:clear("bg")
     -- The small portrait stage stays legible in both system themes.
-    cv:rect(19, 9, 42, 23, 0xEBE8E2)
-    cv:line(19, 9, 60, 9, "border")
-    cv:line(19, 31, 60, 31, "border")
-    local bob = math.sin(previewT * 2.4) * 2
-    cv:image(img.skins[skinIdx], 32, fl(11 + bob))
+    cv:rect(19, 11, 42, 20, 0xEBE8E2)
+    cv:line(19, 11, 60, 11, "border")
+    cv:line(19, 30, 60, 30, "border")
+    -- Two cached frames alternate every 200 ms; the second lacks one waist row.
+    cv:image(img.skins[skinIdx][fl(previewT * 5) % 2 == 0 and "idle" or "up"], 32, 12)
     cv:pixel(26, fl(14 + math.sin(previewT * 3) * 2), "green")
     cv:pixel(53, fl(17 + math.sin(previewT * 2) * 2), "purple")
     return
@@ -582,7 +701,7 @@ local function draw()
   local px = BAT_X - 6 - cam
   if px > -18 and S.mode ~= "title" then
     local sk = img.sticks[stickIdx]
-    cv:image(img.skins[skinIdx], fl(px) - 2, GROUND - 18)
+    cv:image(img.skins[skinIdx][fl(S.tokenFrame * 0.6) % 2 == 0 and "idle" or "up"], fl(px) - 2, GROUND - 18)
     cv:image(S.swingAnim > 0 and sk.swing or sk.idle, fl(px) + 6, GROUND - 12)
   end
   if S.mode == "drop" then
@@ -608,7 +727,7 @@ end
 function on_tick(ms)
   local dt = math.min(ms, 80) / 1000
   S.tokenFrame = S.tokenFrame + dt * 8
-  if S.mode == "title" then previewT = previewT + dt; cv:clear("bg") end
+  if S.mode == "title" then previewT = previewT + dt end
   if S.swingAnim > 0 then S.swingAnim = S.swingAnim - dt * 4 end
   if msgTimer > 0 then
     msgTimer = msgTimer - ms
@@ -624,13 +743,13 @@ function on_tick(ms)
   elseif S.mode == "miss" then
     S.missT = S.missT + dt
     if S.token.y < GROUND - 7 then S.token.y = S.token.y + DROP_SPEED * dt end
-    if S.missT > 1.2 then
+    if S.missT > 0.85 then
       finishFirstStage()
       if S.swing >= SWINGS then endRun() else startSwing() end
     end
   elseif S.mode == "result" then
     S.resultT = S.resultT + dt
-    if S.resultT > 1.3 then
+    if S.resultT > 0.95 then
       if S.swing >= SWINGS then endRun() else startSwing() end
     end
   end
@@ -652,7 +771,10 @@ function on_key(k, rep)
         nextSkin = (nextSkin - 1 + direction) % #SKINS + 1
       end
       skinIdx = nextSkin; storage.set("skin", skinIdx); showSkin()
-    elseif k == "down" then stickIdx = stickIdx % #STICKS + 1; storage.set("stick", stickIdx); showStick()
+    elseif k == "down" then
+      local nextStick = stickIdx % #STICKS + 1
+      while not stickUnlocked(nextStick) do nextStick = nextStick % #STICKS + 1 end
+      stickIdx = nextStick; storage.set("stick", stickIdx); showStick()
     elseif k == "up" then showRanks()
     elseif k == "select" then
       if not SKINS[skinIdx].unlocked then ui.toast("Clear stage 1 to unlock"); return true end

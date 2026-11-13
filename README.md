@@ -1,4 +1,4 @@
-# Moon Shot
+# SOL TO THE MOON
 
 Arcade game for the Solana Breakpoint 2026 badge (ESP32-C5, Solana OS, Lua 5.5).
 
@@ -6,9 +6,9 @@ A Solana-mark token drops. Hold SELECT to charge power, release when it crosses 
 
 ## Characters and UI
 
-Original 16×18 logical-pixel sprites, shown at 4× (64×72 screen pixels): Base Character, Cute Animal (fox), Beanie Degen, Senior Dev, and Sabadinhos. Sabadinhos is hidden until completing stage one. The native screen is 320×240, with 320×218 available to apps; gameplay renders on an 80×54 canvas at 4×. Reference studies only: [Sonic Advance 2 animal sheet](https://www.spriters-resource.com/game_boy_advance/sonicadv2/asset/76977) and [Final Fantasy V Advance portraits](https://www.spriters-resource.com/game_boy_advance/finalfantasy5advance/asset/5156). No third-party sprites copied. Preview sheets are `shots/character_study_light.png` and `shots/character_study_dark.png` (art studies, not emulator screenshots).
+Ten original 16×18 logical-pixel sprites, shown at 4× (64×72 screen pixels): Duck, Cute Animal (fox), Beanie Degen, Senior Dev, Ponytail Dev, Bob Builder, Validator, Onchain Artist, DAO Scout, and Sabadinhos. Sabadinhos is hidden until completing stage one. The native screen is 320×240, with 320×218 available to apps; gameplay renders on an 80×54 canvas at 4×. Each character uses the same seafoam/peach/lavender family with multiple skin shades and distinct accessories. Art source: `scripts/character_art.py`. Preview sheets are `shots/character_study_light.png` and `shots/character_study_dark.png` (art studies, not emulator screenshots). Reference studies only: [Sonic Advance 2 animals](https://www.spriters-resource.com/game_boy_advance/sonicadv2/asset/76977) and [Final Fantasy V Advance portraits](https://www.spriters-resource.com/game_boy_advance/finalfantasy5advance/asset/5156). No third-party sprites copied.
 
-Native `ui.label` supports sizes 12/14/20/32 and `mono`, but no arbitrary font-family. The menu uses built-in ABC Diatype labels and theme colors, so it adapts to light/dark mode. Canvas art uses cached `ui.load` images and `on_tick` bob/shimmer rather than GIF decoding on the badge.
+Native `ui.label` supports sizes 12/14/20/32 and `mono`, but no arbitrary font-family. The menu uses built-in ABC Diatype labels and theme colors. Idle sprites alternate between two cached frames every 200 ms: the second removes one waist row, lifting the feet by one canvas pixel. No GIF decoder, file reads or per-frame image loading.
 
 ## Controls
 

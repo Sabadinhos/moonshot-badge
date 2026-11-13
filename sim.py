@@ -26,14 +26,16 @@ def play_swing(release_at_y):
 
 random.seed(1)
 assert state() == "title"
+assert any(x == ("label", "SOL TO THE MOON") for x in log), "new title must render immediately"
 assert store.get("stage1Done") is None
-G.on_key("left", False)  # wraps to the hidden skin
-assert store.get("skin") == 4, "hidden skin must be skipped before stage 1 is done"
+G.on_key("left", False)  # wraps past the hidden skin
+assert store.get("skin") == 9, "hidden skin must be skipped before stage 1 is done"
+G.on_key("down", False); assert store.get("stick") == 1, "locked bat must be skipped"
 G.on_key("select", False); assert state() == "drop", state()
 results = [play_swing(29), play_swing(20), play_swing(45)]
 assert store.get("stage1Done") is True, "Sabadinhos skin should unlock after stage 1"
 G.on_key("back", False); assert state() == "title"
-G.on_key("right", False); assert store.get("skin") == 5, "Sabadinhos should be selectable after stage 1"
+G.on_key("right", False); assert store.get("skin") == 10, "Sabadinhos should be selectable after stage 1"
 G.on_key("select", False); assert state() == "drop", "unlocked skin should launch immediately"
 G.on_key("back", False); assert state() == "title"
 print("swings (mode, secs, total):", results)

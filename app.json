@@ -1,9 +1,9 @@
 {
   "id": "moonshot",
-  "name": "Moon Shot",
-  "version": "0.1.0",
+  "name": "SOL TO THE MOON",
+  "version": "0.2.0",
   "author": "@sabadinhos",
-  "summary": "Hit the falling token to the moon. 3 swings, timing is everything.",
+  "summary": "Launch the Solana mark to the moon. Three swings. Nail the timing.",
   "icon": "star",
   "accent": "9945FF",
   "category": "games",
