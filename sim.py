@@ -28,6 +28,7 @@ random.seed(1)
 assert state() == "title"
 G.on_key("select", False); assert state() == "drop", state()
 results = [play_swing(29), play_swing(20), play_swing(45)]
+assert store.get("stage1Done") is True, "Sabadinhos skin should unlock after stage 1"
 print("swings (mode, secs, total):", results)
 print("final mode:", state(), "total:", round(G._S.total), "best:", store.get("best"), "awards:", awards)
 print("hints/toasts:", [x for x in log if x[0] != "label"][-4:])

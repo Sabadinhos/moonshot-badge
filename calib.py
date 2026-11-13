@@ -7,6 +7,7 @@ def run_case(power, dy, wind, seed=0):
     G.on_key("select", False)
     S = G._S
     S.wind = wind; S.power = power
+    S.wait = 0  # skip the stage intro for direct physics calibration
     S.token.y = 33 - 4 + dy
     S.charging = True
     keys["select"] = False

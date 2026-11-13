@@ -7,7 +7,8 @@ A token drops. Hold SELECT to charge power, release when the token crosses the b
 ## Controls
 
 - SELECT: hold to charge, release to swing
-- LEFT / RIGHT (menu): pick a stick (Brolly, Big Ben, Ledger; the last two unlock by best score)
+- LEFT / RIGHT (menu): cycle the four character skins; Sabadinhos unlocks after completing the first stage
+- DOWN (menu): cycle sticks (Brolly, Big Ben, Ledger; the last two unlock by best score)
 - UP (menu or end screen): rank board (top 5, stored on the badge)
 - CANCEL: back to menu / exit
 
