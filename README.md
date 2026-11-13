@@ -8,7 +8,7 @@ PUMP a SOL coin across London. Three kicks, four maps, nearby scores. Built for 
 - **Play:** pick a map and character; press and hold SELECT to start the falling coin and charge power, then release near the bat. Three kicks per run.
 - **Social:** nearby badges running this app exchange personal-best scores over mesh. Your rank and up to four peer scores appear on the results screen. Not Yearbook, not a global or verified-friends leaderboard.
 - **Rewards:** code requests 1 !LAMP at 600 m or 3 at 1,100 m. **Inactive until DevRel approves a daily award cap.** Peer scores never determine rewards.
-- **Status:** v1.0.0 tested in a headless simulator; physical-badge and two-badge mesh QA pending. **Not published in the badge App Store.**
+- **Status:** v1.0.1 tested in a headless simulator; transition geometry is not yet checked on a physical badge. Physical-badge and two-badge mesh QA pending. **Not published in the badge App Store.**
 
 [App Store copy](docs/STORE_COPY.md) · [DevRel brief and release checks](docs/DEVREL.md) · [Solana OS API](https://solana.com/breakpoint/badge/apps/docs)
 
