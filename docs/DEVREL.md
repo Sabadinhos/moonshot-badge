@@ -14,12 +14,23 @@ Badges running this same app exchange **personal-best scores** through `mesh.sen
 
 ## Rewards: proposed, not active
 
-The app requests 1 !LAMP for a run of at least 600 m, or 3 !LAMPs for at least 1,100 m, via `lamps.award`. There is no approved daily award cap yet, so the request does **not** pay until DevRel grants an allowance to app ID `moonshot`. The scoring thresholds are in the client and are not fraud-resistant; DevRel should review reward rules and an appropriate per-player daily cap before enabling payments. Players need an X-linked owner account to earn. The current in-app message only shows a reward when the award callback reports a positive grant.
+![Result screen art study showing the three-kick breakdown](../shots/end_study.png)
+
+Requested through `lamps.award`:
+
+| Run total | Request per run |
+| --- | --- |
+| 600 m | 1 !LAMP |
+| 800 m or more | 5 !LAMPs (the maximum per run) |
+
+**Requested daily cap: 20 !LAMPs per player.** `main.lua` keeps a per-UTC-day ledger in `storage` and stops requesting once a badge reaches 20, reserving before the async callback and releasing whatever the server does not grant. That guard is local only: it resets if the clock never syncs, on reinstall, or on a second badge, so the **server-side cap DevRel sets is the real limit**. Please set it to 20 per X account for app ID `moonshot`.
+
+Nothing pays until that allowance exists. Distance thresholds live in the client and are not fraud-resistant. Earning also requires an X-linked owner account, and the in-app toast appears only when the callback reports a positive grant.
 
 ## Release and test
 
 - `main.lua` and `app.json` are the upload package. The tested ZIP is produced locally under `dist/`; the GitHub repository also includes test and art sources, so do not upload the entire repository.
-- Local Lua simulation covers menu controls, fresh-press-to-drop timing and pause/resume, three-kick play, persistence, results, reward callback and mesh message validation; the physics sweep, direct-render regression and source-art/package checks passed for v1.0.2. Badge display QA remains pending.
+- Local Lua simulation covers menu controls, fresh-press-to-drop timing and pause/resume, three-kick play, persistence, results, reward tiers, the local daily-cap ledger and mesh message validation; the physics sweep, direct-render regression and source-art/package checks passed for v1.0.3. Badge display QA remains pending.
 - **Not yet verified on the physical badge.** Before App Store publication, run the ZIP via the submission page's emulator / USB **Run on badge**; test rendering, memory, input, two-badge mesh exchange and the interaction between mesh radio and Wi-Fi. A sign-in and linked X account are required to publish.
 - Publishing without an award cap is possible. Once a cap exists, subsequent code/file/permission changes require organiser approval. Ask DevRel for the cap separately after the gameplay and reward policy are validated.
 

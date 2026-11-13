@@ -7,7 +7,8 @@
 ------------------------------------------------------------------ config
 local SWINGS        = 3
 local AWARD_MIN     = 600    -- total m for 1 !LAMP
-local AWARD_BIG     = 1100   -- total m for 3 !LAMPs
+local AWARD_BIG     = 800    -- total m for up to 5 !LAMPs
+local DAILY_LAMPS   = 20     -- per owner; server cap must also be approved
 local MOON_X        = 400    -- m: a single swing "to the moon"
 local GRAVITY       = 80     -- m/s^2 (arcade, not earth)
 local WIND_K        = 2.1    -- wind acceleration per unit of wind
@@ -788,9 +789,29 @@ local function endRun()
   ui.hint("DOWN bat   UP ranks   SELECT again")
   if total >= AWARD_BIG then led.fill(0x99, 0x45, 0xFF) elseif total >= AWARD_MIN then led.fill(0x14, 0xF1, 0x95) else led.off() end
 
-  local amount = total >= AWARD_BIG and 3 or (total >= AWARD_MIN and 1 or 0)
+  local amount = total >= AWARD_BIG and 5 or (total >= AWARD_MIN and 1 or 0)
   if amount > 0 and lamps and lamps.award then
+    -- A local guard reduces repeated requests. Only DevRel's server-side cap
+    -- can enforce 20 per X account across badges, reinstalls and clock loss.
+    local now = sys.time and sys.time()
+    local day = now and math.floor(now / 86400)
+    local ledger = day and (storage.get("lampDay") or {})
+    if day then
+      if ledger.day ~= day then ledger = {day = day, used = 0} end
+      amount = math.min(amount, math.max(0, DAILY_LAMPS - ledger.used))
+      if amount == 0 then return end
+      ledger.used = ledger.used + amount -- reserve before the async callback
+      storage.set("lampDay", ledger)
+    end
     lamps.award(amount, "moon shot " .. total .. " m", function(ok, r)
+      if day then
+        local current = storage.get("lampDay") or {}
+        if current.day == day then
+          local granted = ok and r and math.min(amount, math.max(0, tonumber(r.awarded) or 0)) or 0
+          current.used = math.max(0, current.used - amount + granted)
+          storage.set("lampDay", current)
+        end
+      end
       if ok and r and r.awarded and r.awarded > 0 then
         ui.toast("+" .. r.awarded .. " !LAMP")
       elseif ok and r and r.needsX then
