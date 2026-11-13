@@ -12,11 +12,14 @@ def tick(n=1):
 def state(): return G._S.mode
 
 def play_swing(release_at_y):
-    """hold select from the first tick, release when token y >= release_at_y"""
-    while state() in ("intro", "ready"):
-        tick()
-    assert state() == "drop"
+    """press to drop, hold for power, release near the bat"""
+    while state() == "intro": tick()
+    keys["select"] = False
+    while state() == "ready" and not G._S.armed: tick()
+    assert state() == "ready" and G._S.token.y == -8
     keys["select"] = True
+    G.on_key("select", False)
+    assert state() == "drop" and G._S.charging
     while state() == "drop":
         tick()
         if G._S.token.y >= release_at_y: keys["select"] = False
@@ -31,21 +34,21 @@ random.seed(1)
 assert state() == "title"
 assert any(x == ("label", "SOL TO THE MOON") for x in log), "new title must render immediately"
 assert store.get("stage1Done") is None
-G.on_key("up", False)
-assert store.get("map") == 2, "UP should cycle map without starting the game"
-G.on_key("up", False); assert store.get("map") == 3
-G.on_key("up", False); assert store.get("map") == 4, "Olympia must be selectable"
-assert any(x == ("label", "^v  OLYMPIA") for x in log)
-G.on_key("up", False); assert store.get("map") == 1, "map selection must wrap"
-G.on_key("up", False); assert store.get("map") == 2
-assert any(x == ("label", "^v  COVENT GARDEN") for x in log)
-tick(2)  # exercise the preview renderer after switching maps
-G.on_key("left", False)  # wraps past the hidden skin
+G.on_key("right", False)
+assert store.get("map") == 2, "RIGHT should cycle map without starting the game"
+G.on_key("right", False); assert store.get("map") == 3
+G.on_key("right", False); assert store.get("map") == 4, "Olympia must be selectable"
+assert any(x == ("label", "< OLYMPIA >") for x in log)
+G.on_key("right", False); assert store.get("map") == 1, "map selection must wrap"
+G.on_key("right", False); assert store.get("map") == 2
+assert any(x == ("label", "< TOWER BRIDGE >") for x in log)
+tick(2)
+G.on_key("up", False)  # wraps past the hidden skin
 assert store.get("skin") == 9, "hidden skin must be skipped before stage 1 is done"
-G.on_key("down", False); assert store.get("map") == 1, "DOWN selects the previous map"
-G.on_key("down", False); assert store.get("map") == 4, "DOWN wraps from first to last map"
-G.on_key("up", False); assert store.get("map") == 1
-G.on_key("up", False); assert store.get("map") == 2
+G.on_key("left", False); assert store.get("map") == 1, "LEFT selects the previous map"
+G.on_key("left", False); assert store.get("map") == 4, "LEFT wraps from first to last map"
+G.on_key("right", False); assert store.get("map") == 1
+G.on_key("right", False); assert store.get("map") == 2
 G.on_key("select", False); assert state() == "intro", state()
 keys["select"] = True  # nervous player holds/mashes during the fly-in
 G.on_key("select", False)
@@ -53,7 +56,7 @@ tick(21); assert state() == "ready", "fly-in must lead to a protected ready stat
 tick(40); assert state() == "ready" and G._S.token.y == -8, "held input must not consume a kick"
 keys["select"] = False
 tick(14); assert state() == "ready", "release needs a brief calm beat"
-tick(1); assert state() == "drop" and not G._S.charging and G._S.token.y == -8
+tick(1); assert state() == "ready" and G._S.armed and G._S.token.y == -8
 assert G._S.map == 2, "selected scene must carry into gameplay"
 results = [play_swing(43)]
 assert state() == "intro", "second kick should have its own fly-in"
@@ -65,7 +68,7 @@ keys["select"] = False
 results.extend([play_swing(36), play_swing(60)])
 assert store.get("stage1Done") is True, "Sabadinhos skin should unlock after stage 1"
 G.on_key("back", False); assert state() == "title"
-G.on_key("right", False); assert store.get("skin") == 10, "Sabadinhos should be selectable after stage 1"
+G.on_key("down", False); assert store.get("skin") == 10, "Sabadinhos should be selectable after stage 1"
 G.on_key("select", False); assert state() == "intro", "unlocked skin should launch immediately"
 G.on_key("back", False); assert state() == "pause"
 G.on_key("down", False); assert state() == "title"
@@ -110,8 +113,9 @@ assert any("7.  YOU" == item["title"] for item in items), items
 G.on_key("back", False); assert state() == "title"
 print("OK")
 
-# DOWN on title moves the map, while the selected bat persists after the result screen.
-G.on_key("down", False); assert store.get("stick") == 1
+# DOWN on title moves the character, while the selected bat persists after the result screen.
+old_skin = store.get("skin")
+G.on_key("down", False); assert store.get("stick") == 1 and store.get("skin") != old_skin
 G.on_key("select", False); print("mode after replay (best=%s):" % store.get("best"), state())
 print("ranks stored:", store.get("ranks") and [dict(v.items()) for v in store.get("ranks").values()])
 print("OK2")

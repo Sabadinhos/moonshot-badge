@@ -578,14 +578,14 @@ local function resumeGame()
   showModal(false)
   S.mode = S.pausedMode
   S.pausedMode = nil
-  if S.mode == "drop" then
-    -- A SELECT press to resume must never release a half-charged swing.
-    S.mode = "ready"; S.readyT = 0
+  if S.mode == "drop" or S.mode == "ready" then
+    -- Resume input must not start a drop or release a half-charged swing.
+    S.mode = "ready"; S.readyT = 0; S.armed = false
     S.token.y = -8; S.charging = false; S.power = 0
     if bar then bar:set(0) end
     led.off()
     setMsg("GET READY", nil, 500, "green")
-    ui.hint("release SELECT to start")
+    ui.hint("release SELECT, then press + hold")
   end
 end
 
@@ -622,13 +622,13 @@ local function setupWorld()
 end
 
 local function showMap()
-  lblMap:text("^v  " .. MAPS[mapIdx].name)
+  lblMap:text("< " .. MAPS[mapIdx].name .. " >")
 end
 
 local function showSkin()
   local sk = SKINS[skinIdx]
   lblSkin:color(sk.unlocked and "purple" or "dim")
-  lblSkin:text("< " .. sk.name .. " >")
+  lblSkin:text("^v  " .. sk.name)
   lblBest:text("")
 end
 
@@ -669,7 +669,7 @@ local function newRun()
   showMap()
   showSkin()
   previewT = 0
-  ui.hint("UP/DN map   <> hero   SELECT play")
+  ui.hint("<> map   UP/DN hero   SELECT play")
   if bar then bar:remove(); bar = nil end
   led.off()
   swipe()
@@ -717,6 +717,7 @@ local function startSwing()
   S.mode = "intro"
   S.introT = 0
   S.readyT = 0
+  S.armed = false
   S.map = mapIdx
   clearResults()
   playBg:show(false)
@@ -743,9 +744,17 @@ local function startSwing()
   setMsg("GET READY", nil, 550, "green")
   if not bar then bar = ui.bar(60, 196, 200, 8, 0) end
   bar:set(0)
-  ui.hint("release SELECT to start")
+  ui.hint("release SELECT, then press + hold")
   led.off()
   swipe()
+end
+
+local function beginDrop()
+  if S.mode ~= "ready" or not S.armed then return end
+  S.mode = "drop"
+  S.charging = true; S.chargeT = 0; S.power = 0
+  setMsg("KEEP HOLDING", nil, 700, "green")
+  ui.hint("hold SELECT   release by the bat")
 end
 
 local function addRank(score)
@@ -809,6 +818,12 @@ local function hit()
   local st = STICKS[stickIdx]
   local dy = S.token.y + 4 - HIT_Y     -- negative: early (token still high)
   local ady = math.abs(dy)
+  if dy < -20 then
+    S.mode = "miss"; S.missT = 0
+    setMsg("TOO EARLY", "hold until the coin reaches the bat", 900, "pink")
+    led.off()
+    return
+  end
   if dy > OK_BAND then
     S.mode = "miss"
     S.missT = 0
@@ -1058,14 +1073,16 @@ function on_tick(ms)
     if S.introT >= 0.6 then S.mode = "ready"; S.readyT = 0 end
   elseif S.mode == "ready" then
     local k = sys.keys and sys.keys() or {}
-    -- Release the launch press first; mashing never advances the token.
-    if k.select then S.readyT = 0
+    -- The coin falls only when a fresh, armed SELECT press begins the kick.
+    if S.armed then
+      if k.select then beginDrop() end
+    elseif k.select then S.readyT = 0
     else
       S.readyT = S.readyT + dt
       if S.readyT >= 0.45 then
-        S.mode = "drop"
-        setMsg("KICK!", nil, 500, "green")
-        ui.hint("hold SELECT: power   release: swing")
+        S.armed = true
+        setMsg("HOLD SELECT", nil, 99999, "green")
+        ui.hint("PRESS + HOLD SELECT   release by bat")
       end
     end
   elseif S.mode == "drop" then tickDrop(dt)
@@ -1094,7 +1111,7 @@ function on_key(k, rep)
     elseif k == "back" or k == "select" then
       showModal(false)
       if S.quitFrom == "pause" then modal("pause", "pause")
-      else S.mode = "title"; ui.hint("UP/DN map   <> hero   SELECT play") end
+      else S.mode = "title"; ui.hint("<> map   UP/DN hero   SELECT play") end
     end
     return true
   end
@@ -1110,17 +1127,21 @@ function on_key(k, rep)
     else S.pausedMode = S.mode; modal("pause", "pause") end
     return true
   end
+  if S.mode == "ready" then
+    if k == "select" then beginDrop() end
+    return true
+  end
   if S.mode == "title" then
     if k == "left" or k == "right" then
-      local direction = k == "left" and -1 or 1
+      mapIdx = (mapIdx - 1 + (k == "right" and 1 or -1)) % #MAPS + 1
+      storage.set("map", mapIdx); showMap()
+    elseif k == "down" or k == "up" then
+      local direction = k == "up" and -1 or 1
       local nextSkin = (skinIdx - 1 + direction) % #SKINS + 1
       while not SKINS[nextSkin].unlocked do
         nextSkin = (nextSkin - 1 + direction) % #SKINS + 1
       end
       skinIdx = nextSkin; storage.set("skin", skinIdx); showSkin()
-    elseif k == "down" or k == "up" then
-      mapIdx = (mapIdx - 1 + (k == "up" and 1 or -1)) % #MAPS + 1
-      storage.set("map", mapIdx); showMap()
     elseif k == "select" then
       if not SKINS[skinIdx].unlocked then ui.toast("Clear stage 1 to unlock"); return true end
       if not stickUnlocked(stickIdx) then ui.toast("Locked: reach " .. STICKS[stickIdx].unlock .. " m"); return true end

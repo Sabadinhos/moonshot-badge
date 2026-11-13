@@ -29,10 +29,15 @@ assert g._S.swing == 1 and g._S.total == 0
 
 g.on_key("back", False)
 assert g._S.mode == "intro", "CANCEL while paused should resume"
-while g._S.mode in ("intro", "ready"):
+while g._S.mode == "intro":
     tick(g)
-assert g._S.mode == "drop"
+keys["select"] = False
+while g._S.mode == "ready" and not g._S.armed:
+    tick(g)
+assert g._S.mode == "ready" and g._S.token.y == -8
 keys["select"] = True
+g.on_key("select", False)
+assert g._S.mode == "drop"
 tick(g, 4)
 assert g._S.charging and g._S.power > 0
 frozen_y = g._S.token.y
@@ -52,8 +57,10 @@ tick(g, 30)
 assert g._S.mode == "ready" and g._S.swing == 1
 keys["select"] = False
 tick(g, 15)
-assert g._S.mode == "drop" and g._S.token.y == -8
+assert g._S.mode == "ready" and g._S.armed and g._S.token.y == -8
 keys["select"] = True
+g.on_key("select", False)
+assert g._S.mode == "drop" and g._S.charging
 while g._S.token.y < 43:
     tick(g)
 keys["select"] = False
