@@ -23,7 +23,10 @@ local HIT_Y         = 47
 -- when the coin reaches the bat: (HIT_Y - 4 + 8) px at DROP_SPEED = 1500 ms.
 local CHARGE_MS     = math.floor((HIT_Y - 4 + 8) / DROP_SPEED * 1000 + 0.5)
 local CW, CH        = 106, 72 -- gameplay at 3x; menu/results stay 80x54 at 4x
-local OK_BAND       = 7      -- +- px still a hit
+local OK_BAND       = 14     -- +- px still a hit (5x easier pass: was 7)
+-- Forgiveness: off-peak power and timing cost far less, so casual kicks still fly.
+local ASSIST        = 0.25   -- share of the power loss a player actually pays
+local EARLY_LIMIT   = -26    -- px above the bat still counts as a swing (was -20)
 local RANKS         = 5
 
 local fl = math.floor
@@ -40,9 +43,9 @@ local MAPS = {
 ------------------------------------------------------------------ sticks
 -- sweet: +- px for PERFECT; power: launch speed multiplier
 local STICKS = {
-  {name = "BROLLY",  desc = "balanced",       sweet = 2.0, power = 1.00, unlock = 0},
-  {name = "BIG BEN", desc = "easy timing",    sweet = 3.5, power = 0.90, unlock = 400},
-  {name = "LEDGER",  desc = "high power",     sweet = 1.2, power = 1.12, unlock = 800},
+  {name = "BROLLY",  desc = "balanced",       sweet = 5.0, power = 1.00, unlock = 0},
+  {name = "BIG BEN", desc = "easy timing",    sweet = 8.0, power = 0.90, unlock = 400},
+  {name = "LEDGER",  desc = "high power",     sweet = 3.5, power = 1.12, unlock = 800},
 }
 
 ------------------------------------------------------------------ skins
@@ -543,7 +546,17 @@ local POPS = {
   PERFECT = {"BULLISH", "green"}, EARLY = {"bearish", "orange"}, LATE = {"bearish", "orange"},
   MISS = {"RUGGED", "pink"}, RAMP = {"PUMP", "lime"}, MOON = {"TO THE MOON", "purple"},
   BEST = {"ATH", "yellow"}, FLAT = {"CRAB", "dim"},
+  MAX = {"MAX PUMP", "lime"}, COMBO2 = {"COMBO x2", "yellow"}, COMBO3 = {"COMBO x3", "purple"},
+  M100 = {"100 M", "lime"}, M200 = {"200 M", "green"}, M300 = {"300 M", "yellow"},
+  LAMP1 = {"+1 !LAMP TIER", "green"}, LAMP5 = {"5 !LAMP TIER", "purple"},
 }
+
+-- Micro-incentives: what the next reward tier needs, said between kicks.
+local function tierLine(total)
+  if total >= AWARD_BIG then return "5 !LAMP TIER LOCKED" end
+  if total >= AWARD_MIN then return (AWARD_BIG - total) .. " m to 5 !LAMPs" end
+  return (AWARD_MIN - total) .. " m to 1 !LAMP"
+end
 local function pop(kind)
   local pz = POPS[kind]; if not pz then return end
   lblPop:text(pz[1]); lblPop:color(pz[2])
@@ -725,6 +738,8 @@ local function startSwing()
   S.power = 0
   S.charging = false
   S.chargeT = 0
+  S.milestone = 0
+  if S.swing == 1 then S.streak = 0 end
   S.cam = 0
   S.swingAnim = 0
   S.flight = nil
@@ -776,6 +791,8 @@ local function endRun()
   if bar then bar:remove(); bar = nil end
   local verdict = total >= AWARD_BIG and "MOONBOUND" or (total >= AWARD_MIN and "BRILLIANT" or "NICE KICKS")
   local sub = isBest and "NEW PERSONAL BEST" or ("BEST " .. best .. " m")
+  local short = total < AWARD_MIN and AWARD_MIN - total or (total < AWARD_BIG and AWARD_BIG - total or nil)
+  if short and short <= 80 then verdict = "SO CLOSE"; sub = short .. " m short   " .. sub end
   if pos then sub = sub .. "   RANK #" .. pos end
   lblMsg:pos(0, 20); lblSub:pos(0, 90)
   setMsg(verdict, sub, 99999, "green")
@@ -830,7 +847,7 @@ local function hit()
   local st = STICKS[stickIdx]
   local dy = S.token.y + 4 - HIT_Y     -- negative: early (token still high)
   local ady = math.abs(dy)
-  if dy < -20 then
+  if dy < EARLY_LIMIT then
     S.mode = "miss"; S.missT = 0
     setMsg("TOO EARLY", "hold until the coin reaches the bat", 900, "pink")
     led.off()
@@ -847,18 +864,22 @@ local function hit()
   end
   local angle, verdict, color
   if ady <= st.sweet then angle, verdict, color = 45, "PERFECT", "green"
-  elseif dy < 0 then angle, verdict = 45 + (ady - st.sweet) * 3.2, "EARLY"  -- high and short
-  else angle, verdict = 45 - (ady - st.sweet) * 3.5, "LATE" end                -- flat
+  elseif dy < 0 then angle, verdict = 45 + (ady - st.sweet) * 1.4, "EARLY"  -- high and short
+  else angle, verdict = 45 - (ady - st.sweet) * 1.5, "LATE" end                -- flat
   angle = math.max(18, math.min(78, angle))
-  local p = S.power / 100
+  local p = 1 - (1 - S.power / 100) * ASSIST
   local v0 = (V_MIN + p * (V_MAX - V_MIN)) * st.power
-  if verdict == "PERFECT" then v0 = v0 + 12 else v0 = v0 * (1 - 0.035 * (ady - st.sweet)) end
+  if verdict == "PERFECT" then v0 = v0 + 12 else v0 = v0 * (1 - 0.008 * (ady - st.sweet)) end
   local rad = math.rad(angle)
   S.flight = {x = 0, y = 0, vx = v0 * math.cos(rad), vy = v0 * math.sin(rad), boosted = {}, rest = 0, stopped = false}
   S.mode = "flight"
   S.swingAnim = 1
+  if verdict == "PERFECT" then S.streak = (S.streak or 0) + 1 else S.streak = 0 end
+  local popKind = verdict
+  if S.streak >= 3 then popKind = "COMBO3" elseif S.streak == 2 then popKind = "COMBO2"
+  elseif S.power >= 95 then popKind = "MAX" end
   setMsg(verdict, string.format("power %d", fl(S.power)), 800, color or "text")
-  pop(verdict)
+  pop(popKind)
   if verdict == "PERFECT" then led.fill(0x14, 0xF1, 0x95) else led.off() end
 end
 
@@ -929,8 +950,18 @@ local function tickFlight(dt)
     S.total = S.total + score
     if f.x >= MOON_X then setMsg("TO THE MOON", nil, 1400, "purple"); pop("MOON"); led.fill(0x99, 0x45, 0xFF)
     elseif f.x < 60 then pop("FLAT") end
+    local before = S.total - score
+    if before < AWARD_BIG and S.total >= AWARD_BIG then pop("LAMP5"); led.fill(0x99, 0x45, 0xFF)
+    elseif before < AWARD_MIN and S.total >= AWARD_MIN then pop("LAMP1") end
+    if f.x < MOON_X and S.swing < SWINGS then setMsg(score .. " m", tierLine(fl(S.total)), 950, "text") end
+    if f.x >= MOON_X and S.swing < SWINGS then lblSub:text(tierLine(fl(S.total))) end
     S.mode = "result"; S.resultT = 0
     finishFirstStage()
+  end
+  local mark = fl(math.max(0, f.x) / 100)
+  if not f.stopped and mark > (S.milestone or 0) and mark <= 3 then
+    S.milestone = mark
+    if popTimer <= 0 then pop("M" .. mark .. "00") end
   end
   if not f.stopped then
     table.insert(S.trail, 1, {x = f.x, y = f.y})
