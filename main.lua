@@ -36,30 +36,122 @@ local STAGES = {
 ------------------------------------------------------------------ sticks
 -- sweet: +- px for PERFECT; power: launch speed multiplier
 local STICKS = {
-  {name = "BROLLY",  desc = "London rain gear. Balanced.",     sweet = 2.0, power = 1.00, unlock = 0},
-  {name = "BIG BEN", desc = "Wide timing window, less power.", sweet = 3.5, power = 0.90, unlock = 400},
-  {name = "LEDGER",  desc = "Cold, hard power. Tiny window.",  sweet = 1.2, power = 1.12, unlock = 800},
+  {name = "BROLLY",  desc = "balanced",       sweet = 2.0, power = 1.00, unlock = 0},
+  {name = "BIG BEN", desc = "easy timing",    sweet = 3.5, power = 0.90, unlock = 400},
+  {name = "LEDGER",  desc = "high power",     sweet = 1.2, power = 1.12, unlock = 800},
 }
 
 ------------------------------------------------------------------ skins
--- 12x14 sprites; all theme-safe colours follow the badge light/dark theme.
+-- Original 16x18 sprites: readable silhouettes at 4x (64x72 physical pixels).
 local SKINS = {
-  {name = "MOON MASCOT", unlocked = true, sprite = {
-    "....gggg....","..gggggggg..",".gwwggggwwg.",".gggggggggg.",".gppggggppg.","..gggggggg..","...ggwwgg...","....gggg....","...g....g...","..gg....gg..",".gg......gg.","ggg......ggg",".............","............."}},
+  {name = "BASE CHARACTER", unlocked = true, sprite = {
+    "................",
+    "................",
+    "....kcccccck....",
+    "....kcccccck....",
+    "....kkkkkkkk....",
+    "...khhhhhhhhk...",
+    "...khhhhhhhhk...",
+    "...khkkhhhkkk...",
+    "...khkkhhhkkk...",
+    "...khhhhhhhhk...",
+    "...khhhkkkhhk...",
+    "...kkkkkkkkkk...",
+    "...kggggggggk...",
+    "..kkkgeeeegkkk..",
+    "..kkkgeeeegkkk..",
+    "..kkkgeeeegkkk..",
+    "...kgkkggkkgk...",
+    "...kkkkkkkkkk..."
+  }},
+  {name = "CUTE ANIMAL", unlocked = true, sprite = {
+    ".kkkk......kkkk.",
+    ".kppk......kppk.",
+    ".kppk......kppk.",
+    ".kpkkkkkkkkkkpk.",
+    ".kkooooooooookk.",
+    "..kooooooooook..",
+    "..ooowkooowkoo..",
+    "..oookkoookkoo..",
+    "..oookkoookkoo..",
+    "..oowwwkkwwwoo..",
+    "...owwpwwpwwo...",
+    "...kwwwwwwwwk...",
+    "....kooooook....",
+    "..kkkowwwwokkk..",
+    "..kkkowwwwokkkw.",
+    "....kowwwwokooo.",
+    "....kkkkkkkk....",
+    ".....kk..kk....."
+  }},
   {name = "BEANIE DEGEN", unlocked = true, sprite = {
-    "....bbbb....","..bbbbbbbb..",".bbbbbbbbbb.","..kkkkkkkk..",".yyyyyyyyyy.",".ykkbyybykky.",".yyyyyyyyyy.","..yyyyyyyy..","...yyyyyy...","....yyyy....","...k....k...","..kk....kk..",".............","............."}},
+    "...kkkkkkkkkk...",
+    "...kbbbbbbbbk...",
+    "...kbbbeebbbk...",
+    "...kbbbeebbbk...",
+    "...kbbbbbbbbk...",
+    "...kkkkkkkkkk...",
+    "...kyyyyyyyyk...",
+    "...kyyyyyyyyk...",
+    "...kykekykekk...",
+    "...kyyyyyyyyk...",
+    "...kyyykkkyyk...",
+    "...kkkkkkkkkk...",
+    "...kbbccccbbk...",
+    "..kkkbccccbkkk..",
+    "..kkkbbbbbbkkk..",
+    "..kkkbbbbbbkkk..",
+    "...kkkkkkkkkk...",
+    "...kkkkkkkkkk..."
+  }},
   {name = "SENIOR DEV", unlocked = true, sprite = {
-    "....wwww....","..wwwwwwww..",".wwwwwwwwww.","..ssssssss..",".ssssssssss.",".swwsssswws.",".ssssssssss.","..ssssssss..","...ssssss...","....ssss....","...k....k...","..kk....kk..",".............","............."}},
-  {name = "SABADINHOS", unlocked = stage1Done, sprite = {
-    "....kkkk....","..kkkkkkkk..",".kkkkkkkkkk.",".kkksskkkksk.",".ksssssssssk.",".krrrrrrrrrk.",".rkkkkkkkrrr.","..ssssssss..","...ssbbss...","...bbbbbb...","....bbbb....","...k....k...","..kk....kk..","............."}},
+    "................",
+    "...kssssssssk...",
+    "...kssssssssk...",
+    "...kssssssssk...",
+    "...kwwwwwwwwk...",
+    "...kttttttttk...",
+    "...kttttttttk...",
+    "...kkkkktkkkk...",
+    "...kkeekkkeek...",
+    "...kkkkktkkkk...",
+    "...kttstttstk...",
+    "...kkkssssskk...",
+    "...ksskkkkssk...",
+    "..kkkskeekskkk..",
+    "..kkkskeekskkk..",
+    "..kkkskeekskkk..",
+    "...kskkkkkksk...",
+    "...kkkkkkkkkk..."
+  }},
+  {name = "SABADINHOS", unlocked = false, sprite = {
+    "....kkkkkkkk....",
+    "..kkkskkkkkskk..",
+    "..kskkkkskkkkk..",
+    "..kkkkkkkkkkkk..",
+    ".kkkskkkkkkkksk.",
+    ".kkkhhhhhhhhkkk.",
+    ".kskhhhhhhhhkkk.",
+    ".kkhrrrrhrrrrkk.",
+    ".kkhrwkrrrwkrkk.",
+    "..khrrrrhrrrrk..",
+    "..khhhttttthhk..",
+    "..kkhhhwwwwhkk..",
+    "...kksssssskk...",
+    "..kkksssssskkk..",
+    "..kkksssssskkk..",
+    "..kkkkkkkkkkkk..",
+    "...kkkkkkkkkk...",
+    "...kkkkkkkkkk..."
+  }},
 }
-
 ------------------------------------------------------------------ art
 local P = {palette = {d = 0x2A2A3A, s = 0x6B6B80, h = 0xFFF7B0, c = 0x3B2F70, e = 0x14F195, n = 0x0D0D14, r = 0xC8102E, t = 0x8A7A5A, g = 0x64D99A, w = 0xF5F1E8, p = 0xE9A8D4, b = 0x6938EF, k = 0x15121D, y = 0xD7A84B}}
 
-local TOKEN_A = {"..yyyy..", ".yoyyyo.", "yoyyyyoy", "yyy..yyy", "yyy..yyy", "yoyyyyoy", ".yoyyyo.", "..yyyy.."}
-local TOKEN_B = {"..yyyy..", ".yyyyyy.", "yyoyyoyy", "yyy..yyy", "yyy..yyy", "yyoyyoyy", ".yyyyyy.", "..yyyy.."}
-local TOKEN_C = {"...yy...", "..yyyy..", "..yyyy..", "..y..y..", "..y..y..", "..yyyy..", "..yyyy..", "...yy..."}
+-- A flying Solana mark, not a coin: three skewed strokes, two shimmer frames.
+local TOKEN_A = {"..eeee..", ".eeee...", "eee.....", "........", "..bbbb..", ".bbbb...", "bbb.....", "..eeee.."}
+local TOKEN_B = {"..bbbb..", ".bbbb...", "bbb.....", "........", "..eeee..", ".eeee...", "eee.....", "..bbbb.."}
+local TOKEN_C = {"...eee..", "..eeee..", ".eee....", "........", "...bbb..", "..bbbb..", ".bbb....", "...eee.."}
 local PLAYER = {"...pp...", "..pppp..", "..pwpw..", "...pp...", ".ppggpp.", "p.gggg.p", "..gggg..", "..g..g..", "..g..g..", ".kk..kk."}
 
 -- sticks, idle (held up) and swing (swept), 7 wide x 7 tall
@@ -130,9 +222,10 @@ local lblWind  = ui.label(0, 2, "", {size = 12, color = "text", w = ui.W - 4, al
 local lblDist  = ui.label(0, 150, "", {size = 20, color = "text", w = ui.W, align = "center"})
 local lblMsg   = ui.label(0, 60, "", {size = 20, color = "green", w = ui.W, align = "center"})
 local lblSub   = ui.label(0, 88, "", {size = 14, color = "dim", w = ui.W, align = "center"})
-local lblTitle = ui.label(0, 36, "", {size = 32, color = "text", w = ui.W, align = "center"})
-local lblStick = ui.label(0, 142, "", {size = 14, color = "purple", w = ui.W, align = "center"})
-local lblBest  = ui.label(0, 180, "", {size = 12, color = "dim", w = ui.W, align = "center"})
+local lblTitle = ui.label(0, 4, "", {size = 32, color = "text", w = ui.W, align = "center"})
+local lblSkin  = ui.label(0, 128, "", {size = 20, color = "purple", w = ui.W, align = "center"})
+local lblStick = ui.label(0, 158, "", {size = 14, color = "dim", w = ui.W, align = "center"})
+local lblBest  = ui.label(0, 184, "", {size = 12, color = "dim", w = ui.W, align = "center"})
 local lblPop   = ui.label(0, 20, "", {size = 32, color = "green", w = ui.W, align = "center"})
 local bar, rankList = nil, nil
 local popTimer, popY = 0, 20
@@ -143,6 +236,8 @@ local ranks = storage.get("ranks") or {}   -- { {name=, score=}, ... } best firs
 local stickIdx = storage.get("stick") or 1
 local skinIdx = storage.get("skin") or 1
 local stage1Done = storage.get("stage1Done") or false
+if skinIdx < 1 or skinIdx > #SKINS or (skinIdx == #SKINS and not stage1Done) then skinIdx = 1 end
+SKINS[#SKINS].unlocked = stage1Done
 local previewT = 0
 
 local S = {}          -- game state
@@ -181,7 +276,8 @@ local function finishFirstStage()
   if S.swing == 1 and not stage1Done then
     stage1Done = true
     storage.set("stage1Done", true)
-    SKINS[4].unlocked = true
+    SKINS[#SKINS].unlocked = true
+    ui.toast("Sabadinhos unlocked")
   end
 end
 
@@ -190,11 +286,11 @@ local function stickUnlocked(i) return best >= STICKS[i].unlock end
 local function showStick()
   local st = STICKS[stickIdx]
   if stickUnlocked(stickIdx) then
-    lblStick:color("purple")
-    lblStick:text("< " .. st.name .. " >   " .. st.desc)
+    lblStick:color("dim")
+    lblStick:text("DOWN  " .. st.name .. "  /  " .. st.desc)
   else
     lblStick:color("dim")
-    lblStick:text("< " .. st.name .. " >   locked: best " .. st.unlock .. " m")
+    lblStick:text("DOWN  " .. st.name .. "  /  best " .. st.unlock .. " m")
   end
 end
 
@@ -211,8 +307,9 @@ end
 
 local function showSkin()
   local sk = SKINS[skinIdx]
-  lblStick:color(sk.unlocked and "purple" or "dim")
-  lblStick:text("< " .. sk.name .. " >" .. (sk.unlocked and "" or "  clear stage 1"))
+  lblSkin:color(sk.unlocked and "purple" or "dim")
+  lblSkin:text("<  " .. sk.name .. "  >")
+  lblBest:text(sk.unlocked and ("best " .. fl(best) .. " m") or "Finish stage 1 to unlock")
 end
 
 local function closeRanks()
@@ -232,15 +329,14 @@ local function newRun()
   S.tokenFrame = 0
   S.stage = 1
   setupWorld()
-  lblTitle:text("Moon Shot")
+  lblTitle:pos(0, 4); lblTitle:text("Moon Shot")
   lblMsg:text(""); lblSub:text(""); lblPop:text(""); popTimer = 0
   lblDist:text("")
   lblTop:text(""); lblWind:text("")
-  lblBest:text("best " .. fl(best) .. " m")
   showStick()
   showSkin()
   previewT = 0
-  ui.hint("SELECT play   UP ranks   LEFT/RIGHT skin   DOWN stick")
+  ui.hint("SELECT play   </> skin   DOWN bat   UP ranks")
   if bar then bar:remove(); bar = nil end
   led.off()
 end
@@ -248,7 +344,7 @@ end
 local function showRanks()
   closeRanks()
   S.mode = "ranks"
-  lblTitle:text(""); lblStick:text(""); lblBest:text("")
+  lblTitle:text(""); lblSkin:text(""); lblStick:text(""); lblBest:text("")
   lblMsg:text(""); lblSub:text("")
   local items = {}
   for i = 1, RANKS do
@@ -274,7 +370,7 @@ local function startSwing()
   S.cam = 0
   S.swingAnim = 0
   S.flight = nil
-  lblTitle:text(""); lblStick:text(""); lblBest:text(""); lblDist:text("")
+  lblTitle:text(""); lblSkin:text(""); lblStick:text(""); lblBest:text(""); lblDist:text("")
   lblTop:text("swing " .. S.swing .. "/" .. SWINGS .. "   total " .. fl(S.total) .. " m")
   local w = S.wind
   local arrow = w > 0 and ">" or (w < 0 and "<" or "=")
@@ -305,7 +401,7 @@ local function endRun()
   local isBest = total > best
   if isBest then best = total; storage.set("best", best) end
   local pos = addRank(total)
-  lblTitle:text(total .. " m")
+  lblTitle:pos(0, 36); lblTitle:text(total .. " m")
   lblDist:text("")
   if bar then bar:remove(); bar = nil end
   local verdict = total >= AWARD_BIG and "LEGENDARY" or (total >= AWARD_MIN and "CONFIRMED" or "DROPPED")
@@ -439,7 +535,19 @@ end
 ------------------------------------------------------------------ draw
 local function draw()
   local st = STAGES[S.stage or 1]
-  cv:clear(S.mode == "title" and "bg" or st.sky)
+  if S.mode == "title" then
+    cv:clear("bg")
+    -- The small portrait stage stays legible in both system themes.
+    cv:rect(19, 9, 42, 23, 0xEBE8E2)
+    cv:line(19, 9, 60, 9, "border")
+    cv:line(19, 31, 60, 31, "border")
+    local bob = math.sin(previewT * 2.4) * 2
+    cv:image(img.skins[skinIdx], 32, fl(11 + bob))
+    cv:pixel(26, fl(14 + math.sin(previewT * 3) * 2), "green")
+    cv:pixel(53, fl(17 + math.sin(previewT * 2) * 2), "purple")
+    return
+  end
+  cv:clear(st.sky)
   local cam = S.cam or 0
   -- moon (parallax 0.5)
   local mx = MOON_X * 0.5 - cam * 0.5 + 40
@@ -472,9 +580,9 @@ local function draw()
   end
   -- player + stick (world x 0)
   local px = BAT_X - 6 - cam
-  if px > -10 and S.mode ~= "title" then
+  if px > -18 and S.mode ~= "title" then
     local sk = img.sticks[stickIdx]
-    cv:image(img.skins[skinIdx], fl(px), GROUND - 14)
+    cv:image(img.skins[skinIdx], fl(px) - 2, GROUND - 18)
     cv:image(S.swingAnim > 0 and sk.swing or sk.idle, fl(px) + 6, GROUND - 12)
   end
   if S.mode == "drop" then
@@ -491,14 +599,7 @@ local function draw()
   elseif S.mode == "miss" then
     local t = S.token
     cv:image(img.token[1], fl(t.x), fl(math.min(t.y, GROUND - 7)))
-  elseif S.mode == "title" then
-    -- Animated home preview, independent of gameplay physics.
-    local bob = math.sin(previewT * 2.4) * 2
-    cv:image(img.skins[skinIdx], 34, fl(5 + bob))
-    cv:line(0, 26, CW - 1, 26, 0x3B2F70)
-    cv:rect(31, 29, 18, 2, 0x3B2F70)
-    cv:pixel(38, fl(30 + math.sin(previewT * 4) * 2), 0xFFF7B0)
-  elseif S.mode == "title" or S.mode == "end" then
+  elseif S.mode == "end" then
     cv:image(img.token[fl(S.tokenFrame) % 4 + 1], CW - 12, 1)
   end
 end
@@ -544,8 +645,13 @@ function on_key(k, rep)
     return true
   end
   if S.mode == "title" then
-    if k == "left" then skinIdx = (skinIdx - 2) % #SKINS + 1; if not SKINS[skinIdx].unlocked then ui.toast("Clear stage 1 to unlock") end; storage.set("skin", skinIdx); showSkin()
-    elseif k == "right" then skinIdx = skinIdx % #SKINS + 1; if not SKINS[skinIdx].unlocked then ui.toast("Clear stage 1 to unlock") end; storage.set("skin", skinIdx); showSkin()
+    if k == "left" or k == "right" then
+      local direction = k == "left" and -1 or 1
+      local nextSkin = (skinIdx - 1 + direction) % #SKINS + 1
+      while not SKINS[nextSkin].unlocked do
+        nextSkin = (nextSkin - 1 + direction) % #SKINS + 1
+      end
+      skinIdx = nextSkin; storage.set("skin", skinIdx); showSkin()
     elseif k == "down" then stickIdx = stickIdx % #STICKS + 1; storage.set("stick", stickIdx); showStick()
     elseif k == "up" then showRanks()
     elseif k == "select" then

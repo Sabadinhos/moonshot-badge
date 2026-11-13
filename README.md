@@ -2,35 +2,26 @@
 
 Arcade game for the Solana Breakpoint 2026 badge (ESP32-C5, Solana OS, Lua 5.5).
 
-A token drops. Hold SELECT to charge power, release when the token crosses the bat. Three swings, one per stage (Intelligence Summit, Scale or Die, Breakpoint). Total distance is the score. Reach 600 m for 1 !LAMP, 1100 m for 3.
+A Solana-mark token drops. Hold SELECT to charge power, release when it crosses the bat. Three swings across Intelligence Summit, Scale or Die, and Breakpoint. Total distance is the score. 600 m qualifies for 1 !LAMP, 1100 m for 3 (requires DevRel allowance).
+
+## Characters and UI
+
+Original 16×18 logical-pixel sprites, shown at 4× (64×72 screen pixels): Base Character, Cute Animal (fox), Beanie Degen, Senior Dev, and Sabadinhos. Sabadinhos is hidden until completing stage one. The native screen is 320×240, with 320×218 available to apps; gameplay renders on an 80×54 canvas at 4×. Reference studies only: [Sonic Advance 2 animal sheet](https://www.spriters-resource.com/game_boy_advance/sonicadv2/asset/76977) and [Final Fantasy V Advance portraits](https://www.spriters-resource.com/game_boy_advance/finalfantasy5advance/asset/5156). No third-party sprites copied. Preview sheets are `shots/character_study_light.png` and `shots/character_study_dark.png` (art studies, not emulator screenshots).
+
+Native `ui.label` supports sizes 12/14/20/32 and `mono`, but no arbitrary font-family. The menu uses built-in ABC Diatype labels and theme colors, so it adapts to light/dark mode. Canvas art uses cached `ui.load` images and `on_tick` bob/shimmer rather than GIF decoding on the badge.
 
 ## Controls
 
-- SELECT: hold to charge, release to swing
-- LEFT / RIGHT (menu): cycle the four character skins; Sabadinhos unlocks after completing the first stage
+- SELECT: start immediately; during the run hold for charge and release to swing
+- LEFT / RIGHT (menu): cycle unlocked skins
 - DOWN (menu): cycle sticks (Brolly, Big Ben, Ledger; the last two unlock by best score)
-- UP (menu or end screen): rank board (top 5, stored on the badge)
+- UP (menu or end screen): local top-five rank board
 - CANCEL: back to menu / exit
 
-## Files
+## Test and transfer
 
-- `main.lua` – the app (single file, ~20 KB, no bundled assets; all art is inline pixel art)
-- `app.json` – manifest (permissions: `led`, `lamps`)
-- `sim_env.py`, `sim.py`, `calib.py` – headless harness that stubs the Solana OS Lua API (needs `lupa`, Lua 5.5) for play-through tests and physics calibration
-- `shots/` – screenshots from the official web emulator
+Use the `app.json` and `main.lua` files on the [app submission page](https://solana.com/breakpoint/badge/apps/submit). Try in emulator or Run on badge (desktop Chrome/Edge via USB); publishing is a separate step. Do not upload the entire repository, which includes Python tests and screenshots.
 
-## Test
+For local simulation, create `.venv` with Lua 5.5 `lupa` and run `sim.py`. `calib.py 10` runs a physics sweep. Both are headless; physical badge visual and performance QA remain necessary.
 
-```
-uv venv .venv && uv pip install --python .venv/Scripts/python.exe lupa
-.venv/Scripts/python.exe sim.py       # scripted 2-run play-through, asserts state machine
-.venv/Scripts/python.exe calib.py 10  # distance/time sweep over power x timing x wind
-```
-
-Emulator: open https://solana.com/breakpoint/badge/emulator, console `lua put moonshot main.lua begin|<base64 lines>|end`, then `lua run moonshot`. Or drop the folder on https://solana.com/breakpoint/badge/apps/submit and use Try in emulator / Run on badge.
-
-Measured on the emulator firmware: boots with ~43 KB Lua heap, no errors across menu, ranks, 3 swings, end screen.
-
-## !LAMPs
-
-`lamps.award` pays only after DevRel sets an award cap for the app. Proposal: 1 !LAMP at 600 m total, 3 at 1100 m, 10 per player per day.
+`lamps.award` pays only after DevRel sets an award cap for app id `moonshot`.
