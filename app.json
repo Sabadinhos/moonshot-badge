@@ -1,0 +1,11 @@
+{
+  "id": "moonshot",
+  "name": "Moon Shot",
+  "version": "0.1.0",
+  "author": "@sabadinhos",
+  "summary": "Hit the falling token to the moon. 3 swings, timing is everything.",
+  "icon": "star",
+  "accent": "9945FF",
+  "category": "games",
+  "permissions": ["led", "lamps"]
+}
