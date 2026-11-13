@@ -30,7 +30,7 @@ Pick a character. Hold SELECT to drop the coin and charge. Release near the bat.
 - **Menu:** LEFT/RIGHT map, UP/DOWN character, SELECT play.
 - **Kick:** after the short intro, release SELECT once. Press and hold it again to start the drop and charge, then release near the bat. CANCEL pauses play and quitting asks for confirmation. The OS HOME key cannot be intercepted.
 - **Results:** DOWN selects the next bat, UP shows nearby ranks, SELECT replays. Ranks are self-reported by nearby badges running this app: not Yearbook, not a global or verified-friends leaderboard.
-- **App:** `soltothemoon` v1.1.1 · Lua 5.5 · Solana OS · ESP32-C5. Upload `main.lua` and `app.json` only, or the matching local `dist/` ZIP. Run the emulator and the USB badge test before publishing.
-- **Validation:** headless Lua simulations cover controls, game flow, rewards, identity and physics (`python sim.py`, `sim_controls.py`, `sim_final_controls.py`, `sim_rewards.py`, `sim_transition.py`, `sim_identity.py`, `calib.py 10`). `sim_render.py` rasterises the same draw calls for the GIFs above. Physical badge, two-badge mesh and App Store publication remain unverified.
+- **App:** `soltothemoon` v1.1.2 · Lua 5.5 · Solana OS · ESP32-C5. Upload `main.lua` and `app.json` only, or the matching local `dist/` ZIP. Run the emulator and the USB badge test before publishing.
+- **Validation:** headless Lua simulations cover controls, game flow, rewards, identity and physics (`python sim.py`, `sim_controls.py`, `sim_final_controls.py`, `sim_rewards.py`, `sim_transition.py`, `sim_identity.py`, `sim_balance.py`, `calib.py 10`). `sim_render.py` rasterises the same draw calls for the GIFs above. Physical badge, two-badge mesh and App Store publication remain unverified.
 
 </details>

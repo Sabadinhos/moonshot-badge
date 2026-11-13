@@ -30,7 +30,7 @@ Nothing pays until that allowance exists. Distance thresholds live in the client
 ## Release and test
 
 - `main.lua` and `app.json` are the upload package. The tested ZIP is produced locally under `dist/`; the GitHub repository also includes test and art sources, so do not upload the entire repository.
-- Local Lua simulation covers menu controls, fresh-press-to-drop timing and pause/resume, three-kick play, persistence, results, reward tiers, the local daily-cap ledger and mesh message validation; the physics sweep, direct-render regression and source-art/package checks passed for v1.1.1. Badge display QA remains pending.
+- Local Lua simulation covers menu controls, fresh-press-to-drop timing and pause/resume, three-kick play, persistence, results, reward tiers, the local daily-cap ledger and mesh message validation; the physics sweep, direct-render regression and source-art/package checks passed for v1.1.2. Badge display QA remains pending.
 - **Not yet verified on the physical badge.** Before App Store publication, run the ZIP via the submission page's emulator / USB **Run on badge**; test rendering, memory, input, two-badge mesh exchange and the interaction between mesh radio and Wi-Fi. A sign-in and linked X account are required to publish.
 - Publishing without an award cap is possible. Once a cap exists, subsequent code/file/permission changes require organiser approval. Ask DevRel for the cap separately after the gameplay and reward policy are validated.
 

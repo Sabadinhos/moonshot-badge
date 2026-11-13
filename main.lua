@@ -16,11 +16,13 @@ local V_MIN, V_MAX  = 35, 125 -- launch speed at power 0 / 100
 local BOUNCE        = 0.45
 local FRICTION      = 0.70
 local DROP_SPEED    = 34     -- canvas px/s token fall
-local CHARGE_MS     = 1100   -- 0 -> 100 -> 0 cycle half
-local CW, CH        = 106, 72 -- gameplay at 3x; menu/results stay 80x54 at 4x
 local GROUND        = 58
 local BAT_X         = 18
 local HIT_Y         = 47
+-- The press starts both the drop and the charge, so the charge must peak exactly
+-- when the coin reaches the bat: (HIT_Y - 4 + 8) px at DROP_SPEED = 1500 ms.
+local CHARGE_MS     = math.floor((HIT_Y - 4 + 8) / DROP_SPEED * 1000 + 0.5)
+local CW, CH        = 106, 72 -- gameplay at 3x; menu/results stay 80x54 at 4x
 local OK_BAND       = 7      -- +- px still a hit
 local RANKS         = 5
 

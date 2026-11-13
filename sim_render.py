@@ -94,8 +94,11 @@ class Bar:
         self.visible = True
 
 
-def load(seed=None):
-    """Load main.lua against the rasterising stub. Returns (lua, globals, keys, scene)."""
+def load(seed=None, nearby=None):
+    """Load main.lua against the rasterising stub. Returns (lua, globals, keys, scene).
+
+    nearby: optional list of (badge_id, handle) the mesh stub reports as nearby.
+    """
     L = LuaRuntime(unpack_returned_tuples=True)
     G = L.globals()
     if seed is not None:
@@ -150,8 +153,10 @@ def load(seed=None):
     def mk_list(x, y, w, h, items, opts=None):
         rows = [dict(i.items()) if hasattr(i, 'items') else i for i in items.values()]
         log.append(('list', rows))
-        scene['list'] = rows
-        t = wrap(Rect(x, y, w, h, None))
+        box = Rect(x, y, w, h, None)
+        box.rows = rows
+        scene['list'] = box
+        t = wrap(box)
         t.items = lambda self, *a: None
         t.select = lambda self, *a: None
         t.selected = lambda self: 1
@@ -175,8 +180,9 @@ def load(seed=None):
     G.led = L.table(count=8, set=lambda *a: None, hex=lambda *a: None,
                     fill=lambda *a: None, off=lambda *a: None)
     G.badge = L.table(owner=lambda: '@sabadinhos', id=lambda: '7K2Q9M')
+    peers = nearby or [('FRIEND1', '@friend')]
     G.mesh = L.table(send=lambda to, msg: None,
-                     nearby=lambda: L.table_from([L.table(id='FRIEND1', name='@friend', level=42)]))
+                     nearby=lambda: L.table_from([L.table(id=i, name=n, level=42) for i, n in peers]))
     G.sys = L.table(keys=lambda: L.table(select=keys['select']), millis=lambda: 0,
                     time=lambda: 1790000000, exit=lambda: log.append(('exit',)))
     G.lamps = L.table(award=lambda amount, reason, cb: (awards.append((amount, reason)),
@@ -206,6 +212,20 @@ def frame(scene, upscale=2):
             fill_w = int(b.w * max(0, min(100, b.value or 0)) / 100)
             if fill_w:
                 d.rectangle((b.x, b.y, b.x + fill_w, b.y + b.h), fill=rgb('green'))
+    box = scene.get('list')
+    if box is not None and box.visible:
+        f = _font(16)
+        for i, row in enumerate(box.rows):
+            ry = box.y + 4 + i * 34
+            if i == 0:
+                d.rectangle((box.x, ry - 4, box.x + box.w, ry + 26), fill=(38, 30, 66))
+            title = str(row.get('title', '')) if isinstance(row, dict) else str(row)
+            right = str(row.get('right', '')) if isinstance(row, dict) else ''
+            col = rgb('green') if 'YOU' in title else rgb('text')
+            d.text((box.x + 10, ry), title, font=f, fill=col)
+            if right:
+                d.text((box.x + box.w - 10 - d.textlength(right, font=f), ry), right, font=f,
+                       fill=rgb('purple'))
     for lb in scene['labels']:
         if not lb.visible or not lb.text_value:
             continue

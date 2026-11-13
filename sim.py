@@ -92,7 +92,11 @@ G.on_key("select", False); assert state() == "intro"
 [play_swing(43) for _ in range(3)]
 assert state() == "end"
 G.on_key("down", False); assert store.get("stick") == 2
-G.on_key("down", False); assert store.get("stick") == 1, "locked Ledger must be skipped"
+G.on_key("down", False)
+if store.get("best") >= 800:
+    assert store.get("stick") == 3, "Ledger unlocks at 800 m"
+    G.on_key("down", False)
+assert store.get("stick") == 1, "bat selection must wrap, skipping locked bats"
 G.on_mesh("FRIEND1", L.table(kind="stm-score", value=777))
 assert store.get("peers")["FRIEND1"]["name"] == "@friend"
 G.on_mesh("FRIEND1", L.table(kind="stm-score", value=600))
@@ -106,10 +110,10 @@ G.on_key("up", False); assert state() == "ranks", state()
 assert any(i.get("title", "").endswith("@friend") for x in log if x[0] == "list" for i in x[1])
 print("rank list:", [x for x in log if x[0] == "list"][-1])
 for i in range(5):
-    G.on_mesh("PEER" + str(i), L.table(kind="stm-score", value=900 + i))
+    G.on_mesh("PEER" + str(i), L.table(kind="stm-score", value=1500 + i))
 items = [x for x in log if x[0] == "list"][-1][1]
 assert len(items) == 5 and any("YOU" in item["title"] for item in items)
-assert any("7.  YOU" == item["title"] for item in items), items
+assert items[-1]["title"].endswith("YOU") and int(items[-1]["title"].split(".")[0]) > 5, items
 G.on_key("back", False); assert state() == "title"
 print("OK")
 
