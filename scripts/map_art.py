@@ -37,10 +37,25 @@ def scene(kind):
   for x in (14,30,46,62):
    box(x,10,x+6,14,'l');box(x+1,9,x+5,9,'s');box(x+2,11,x+4,14,'d')
   box(12,2,16,3,'l');box(62,2,67,3,'l')
+ elif kind=='OLYMPIA':
+  # Olympia Grand Hall's arched glass roof; the Eye reads as a London landmark.
+  box(2,13,47,16,'d')
+  for x in range(4,46):
+   y=3+((x-24)*(x-24))//82
+   dot(x,y,'s');box(x,y+1,x,12,'l')
+  for x in range(9,45,7):box(x,8,x,12,'d')
+  box(19,1,29,2,'s');box(6,12,44,12,'d')
+  for x in range(53,72):
+   for y in range(0,17):
+    radius=(x-62)*(x-62)+(y-8)*(y-8)
+    if 52<=radius<=78:dot(x,y,'s')
+  box(61,7,63,9,'c');box(61,10,63,16,'d')
+  for x,y in ((62,1),(62,15),(54,8),(70,8)):dot(x,y,'c')
+  box(49,15,76,16,'l')
  else:raise ValueError(kind)
  return [''.join(row) for row in g]
 
-MAPS=['WESTMINSTER','TOWER BRIDGE','COVENT GARDEN']
+MAPS=['WESTMINSTER','TOWER BRIDGE','COVENT GARDEN','OLYMPIA']
 
 def icon(kind):
  """24x17 transparent landmark emblems for the menu, not scene thumbnails."""
@@ -67,17 +82,27 @@ def icon(kind):
   for x in (3,10,17):
    box(x,9,x+4,14,'s');box(x+1,10,x+3,14,'l');box(x+2,11,x+2,14,'.')
   box(2,8,2,15,'s');box(21,8,21,15,'s')
+ elif kind=='OLYMPIA':
+  box(1,14,12,16,'d')
+  for x in range(1,13):
+   y=4+((x-6)*(x-6))//8
+   box(x,y,x,13,'l');box(x,y,x,y,'s')
+  for x in range(13,24):
+   for y in range(1,16):
+    r=(x-18)*(x-18)+(y-8)*(y-8)
+    if 32<=r<=54:g[y][x]='s'
+  box(17,8,19,9,'c');box(18,10,18,16,'d')
  else:raise ValueError(kind)
  return [''.join(row) for row in g]
 
-CROPS=[9,14,24]
 COLORS=[{'sky':'0x171720','ground':'0x302B39','d':'0x51485F','s':'0x80738B','l':'0x363847','c':'0xD8B984','menu':'0xE8E2EB'},
         {'sky':'0x15242B','ground':'0x293D44','d':'0x4B6973','s':'0x829DA4','l':'0x2A4A55','c':'0xD8B984','menu':'0xE0ECEF'},
-        {'sky':'0x251E28','ground':'0x403139','d':'0x66535F','s':'0x9D818B','l':'0x503C49','c':'0xD8B984','menu':'0xF0E8E4'}]
+        {'sky':'0x251E28','ground':'0x403139','d':'0x66535F','s':'0x9D818B','l':'0x503C49','c':'0xD8B984','menu':'0xF0E8E4'},
+        {'sky':'0x191F2B','ground':'0x30394A','d':'0x566078','s':'0x8E98B4','l':'0x38475D','c':'0xDCC49D','menu':'0xE4E8F0'}]
 
 def render():
  out=Path(__file__).resolve().parents[1]/'shots';out.mkdir(exist_ok=True)
- sheet=Image.new('RGB',(3*320,150),(235,232,226));d=ImageDraw.Draw(sheet)
+ sheet=Image.new('RGB',(len(MAPS)*320,150),(235,232,226));d=ImageDraw.Draw(sheet)
  for i,n in enumerate(MAPS):
   c=COLORS[i]; im=Image.new('RGB',(80,30),int(c['sky'][2:],16))
   for y,row in enumerate(scene(n)):

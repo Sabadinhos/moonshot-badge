@@ -31,6 +31,8 @@ assert store.get("stage1Done") is None
 G.on_key("up", False)
 assert store.get("map") == 2, "UP should cycle map without starting the game"
 G.on_key("up", False); assert store.get("map") == 3
+G.on_key("up", False); assert store.get("map") == 4, "Olympia must be selectable"
+assert any(x == ("label", "UP  OLYMPIA") for x in log)
 G.on_key("up", False); assert store.get("map") == 1, "map selection must wrap"
 G.on_key("up", False); assert store.get("map") == 2
 assert any(x == ("label", "UP  COVENT GARDEN") for x in log)
@@ -54,6 +56,15 @@ print("labels:", [x[1] for x in log if x[0] == "label"][-8:])
 G.on_key("select", False); assert state() == "drop"
 r2 = [play_swing(29) for _ in range(3)]
 print("run2:", r2, "mode:", state(), "awards:", awards)
+assert state() == "end"
+assert len(G._S.shots) == 3 and sum(G._S.shots.values()) == int(G._S.total), "all kick scores must be on the result"
+assert G._S.celebrate > 0, "end scene confetti must begin"
+assert any(x[0] == "label" and "KICK 1" in x[1] for x in log), "end scene must show individual kicks"
+tick(100); assert G._S.celebrate == 0, "confetti must stop instead of burning CPU"
+G.on_key("select", False); assert state() == "drop" and len(G._S.shots) == 0, "replay must reset kick stats"
+G.on_key("back", False); assert state() == "title"
+G.on_key("select", False); assert state() == "drop"
+[play_swing(29) for _ in range(3)]
 assert state() == "end"
 G.on_key("up", False); assert state() == "ranks", state()
 print("rank list:", [x for x in log if x[0] == "list"][-1])

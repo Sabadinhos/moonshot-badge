@@ -2,7 +2,7 @@
 
 Arcade game for the Solana Breakpoint 2026 badge (ESP32-C5, Solana OS, Lua 5.5).
 
-A Solana-mark token drops. Hold SELECT to charge power, release when it crosses the bat. Three swings across Intelligence Summit, Scale or Die, and Breakpoint. Total distance is the score. 600 m qualifies for 1 !LAMP, 1100 m for 3 (requires DevRel allowance).
+A SOL coin drops. Hold SELECT to charge power, release when it crosses the bat. Three kicks per run; the total is the score. 600 m qualifies for 1 !LAMP, 1100 m for 3 (requires DevRel allowance). During play, wind streaks show direction and three pips show kicks remaining; distance and each kick's score appear only on the result screen.
 
 ## Characters and UI
 
@@ -10,13 +10,13 @@ Ten original 16×18 logical-pixel sprites, shown at 4× (64×72 screen pixels): 
 
 Native `ui.label` supports sizes 12/14/20/32 and `mono`, but no arbitrary font-family. The menu uses built-in ABC Diatype labels and theme colors. Idle sprites alternate between two cached frames every 200 ms: the second removes one waist row, lifting the feet by one canvas pixel. No GIF decoder, file reads or per-frame image loading.
 
-The menu places a transparent 24×17 London landmark emblem on the left and only the character's face on the right. No boxed skyline or screenshot-style map thumbnail remains. Three original, restrained London pixel backdrops (Westminster, Tower Bridge, Covent Garden) still appear as transparent 80×17 parallax strips during play, with the characters' muted lavender/seafoam/warm-neutral palette. The icons and in-game strips are cached at startup. Art source: `scripts/map_art.py`; `shots/menu_final_study.png` is a generated layout study, not a badge screenshot.
+Four original, restrained London pixel backdrops (Westminster with Big Ben, Tower Bridge, Covent Garden, and Olympia with an arched hall and London Eye) appear as transparent 80×17 parallax strips during play. The menu has transparent 24×17 landmark emblems on the left and a character face on the right. The result scene shows total, individual kicks, personal best/rank, and brief confetti. Art sources: `scripts/map_art.py`, `scripts/token_art.py`; `shots/menu_final_study.png` and `shots/end_study.png` are generated layout studies, not badge screenshots.
 
 ## Controls
 
 - SELECT: start immediately; during the run hold for charge and release to swing
 - LEFT / RIGHT (menu): cycle unlocked characters in the right-hand panel
-- UP (menu): cycle maps in the left-hand panel (Westminster, Tower Bridge, Covent Garden); the preview and in-game skyline, sky, and ground switch together. Each run still has the same three swings.
+- UP (menu): cycle four maps in the left-hand panel (Westminster, Tower Bridge, Covent Garden, Olympia). Each run still has three kicks.
 - DOWN (menu): cycle sticks (Brolly, Big Ben, Ledger; the last two unlock by best score)
 - UP (end screen): local top-five rank board
 - CANCEL: back to menu / exit

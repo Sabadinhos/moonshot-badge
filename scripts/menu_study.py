@@ -24,7 +24,7 @@ def tile(im,rows,pal,x,y):
    if isinstance(c,str):c=col(c)
    ImageDraw.Draw(im).rectangle((x+xx*4,y+yy*4,x+xx*4+3,y+yy*4+3),fill=c)
 
-out=Image.new('RGB',(960,436))
+out=Image.new('RGB',(len(MAPS)*320,436))
 for theme in range(2):
  for i,mapname in enumerate(MAPS):
   bg=(247,246,243) if theme==0 else (20,21,30)
@@ -36,7 +36,7 @@ for theme in range(2):
   icon_pal={'d':purple,'s':(72,174,148),'l':muted,'c':(219,175,103)}
   tile(im,icon(mapname),icon_pal,32,56)
   d.rectangle((200,52,279,123),fill=col(c['menu']))
-  name=['DUCK','PONYTAIL DEV','VALIDATOR'][i]
+  name=['DUCK','PONYTAIL DEV','VALIDATOR','CUTE ANIMAL'][i]
   tile(im,sprite(name)[:12],PALETTE,208,64)
   d=ImageDraw.Draw(im)
   center(d,'SOL TO THE MOON',4,f(27,True),ink)

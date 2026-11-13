@@ -27,16 +27,12 @@ local RANKS         = 5
 local fl = math.floor
 
 ------------------------------------------------------------------ stages
-local STAGES = {
-  {name = "INTELLIGENCE SUMMIT", sub = "stage 1"},
-  {name = "SCALE OR DIE",        sub = "stage 2"},
-  {name = "BREAKPOINT",          sub = "stage 3"},
-}
--- A map changes the scenery, not the three-swing progression.
+-- A map changes the scenery, not the three-kick progression.
 local MAPS = {
   {name = "WESTMINSTER", sky = 0x171720, ground = 0x302B39, menu = 0xE8E2EB, d = 0x51485F, s = 0x80738B, l = 0x363847, c = 0xD8B984},
   {name = "TOWER BRIDGE", sky = 0x15242B, ground = 0x293D44, menu = 0xE0ECEF, d = 0x4B6973, s = 0x829DA4, l = 0x2A4A55, c = 0xD8B984},
   {name = "COVENT GARDEN", sky = 0x251E28, ground = 0x403139, menu = 0xF0E8E4, d = 0x66535F, s = 0x9D818B, l = 0x503C49, c = 0xD8B984},
+  {name = "OLYMPIA", sky = 0x191F2B, ground = 0x30394A, menu = 0xE4E8F0, d = 0x566078, s = 0x8E98B4, l = 0x38475D, c = 0xDCC49D},
 }
 
 ------------------------------------------------------------------ sticks
@@ -261,11 +257,9 @@ end
 ------------------------------------------------------------------ art
 local P = {palette = {d = 0x2A2A3A, s = 0x6B6B80, h = 0xFFF7B0, c = 0x3B2F70, e = 0x14F195, n = 0x0D0D14, r = 0xC8102E, t = 0x8A7A5A, g = 0x64D99A, w = 0xF5F1E8, p = 0xE9A8D4, b = 0x6938EF, k = 0x15121D, y = 0xD7A84B}}
 
--- A flying Solana mark, not a coin: three skewed strokes, two shimmer frames.
-local TOKEN_A = {"..eeee..", ".eeee...", "eee.....", "........", "..bbbb..", ".bbbb...", "bbb.....", "..eeee.."}
-local TOKEN_B = {"..bbbb..", ".bbbb...", "bbb.....", "........", "..eeee..", ".eeee...", "eee.....", "..bbbb.."}
-local TOKEN_C = {"...eee..", "..eeee..", ".eee....", "........", "...bbb..", "..bbbb..", ".bbb....", "...eee.."}
-local PLAYER = {"...pp...", "..pppp..", "..pwpw..", "...pp...", ".ppggpp.", "p.gggg.p", "..gggg..", "..g..g..", "..g..g..", ".kk..kk."}
+-- Gold-rim SOL coin with three separate Solana bands, two shimmer frames.
+local TOKEN_A = {"....yy....", "..ywkkyy..", ".ykeeeeky.", ".ykkkkkky.", "ykbbbbbbky", "ykkkkkkkky", ".ykeeeeey.", ".ykkkkkky.", "..yykkwy..", "....yy...."}
+local TOKEN_B = {"....yy....", "..yykkwy..", ".ykeeeeky.", ".ykkkkkky.", "ykbbbbbbky", "ykkkkkkkky", ".ykeeeeey.", ".ykkkkkky.", "..ywkkyy..", "....yy...."}
 
 -- sticks, idle (held up) and swing (swept), 7 wide x 7 tall
 local STICK_ART = {
@@ -279,7 +273,6 @@ local STICK_ART = {
 local MOON = {"..hhhh..", ".hhhhhh.", "hhhshhhh", "hhhhhhsh", "hshhhhhh", "hhhhshhh", ".hhhhhh.", "..hhhh.."}
 local CLOUD = {"...ssss...", ".ssssssss.", "ssssssssss"}
 local RAMP = {".....e", "...eee", ".eeeee"}
-local FLAG = {"mmm", "mm.", "m..", "m..", "m.."}
 
 -- Classic London strips: 80x17, tiled at parallax 0.3 (source: scripts/map_art.py)
 local BACK = {
@@ -401,6 +394,45 @@ local MAP_ICON = {
     "..dddddddddddddddddddd.."
   },
 }
+-- Olympia Grand Hall and London Eye (same pixel source).
+BACK[4] = {
+  "...........................................................sssssss..............",
+  "...................sssssssssss...........................ssss.c.ssss............",
+  "...................sssssssssss..........................sss.......sss...........",
+  "...............sssssssssssssssssss.....................ss...........ss..........",
+  "............ssslllllllllllllllllllsss..................ss...........ss..........",
+  ".........ssslllllllllllllllllllllllllsss..............ss.............ss.........",
+  "......ssslllllllllllllllllllllllllllllllsss...........ss.............ss.........",
+  "....sslllllllllllllllllllllllllllllllllllllss.........s......ccc......s.........",
+  "....llllldlllllldlllllldlllllldlllllldllllllds........c......ccc......c.........",
+  "....llllldlllllldlllllldlllllldlllllldlllllldl........s......ccc......s.........",
+  "....llllldlllllldlllllldlllllldlllllldlllllldl........ss.....ddd.....ss.........",
+  "....llllldlllllldlllllldlllllldlllllldlllllldl........ss.....ddd.....ss.........",
+  "....lldddddddddddddddddddddddddddddddddddddddl.........ss....ddd....ss..........",
+  "..dddddddddddddddddddddddddddddddddddddddddddddd.......ss....ddd....ss..........",
+  "..dddddddddddddddddddddddddddddddddddddddddddddd........sss..ddd..sss...........",
+  "..dddddddddddddddddddddddddddddddddddddddddddddd.llllllllllllllllllllllllllll...",
+  "..dddddddddddddddddddddddddddddddddddddddddddddd.llllllllllllllllllllllllllll..."
+}
+MAP_ICON[4] = {
+  "........................",
+  "................sssss...",
+  "..............sssssssss.",
+  ".............sss.....sss",
+  "....sssss....ss.......ss",
+  "...sllllls...s.........s",
+  "..sllllllls.............",
+  ".sllllllllls............",
+  ".llllllllllls....ccc....",
+  ".llllllllllll....ccc....",
+  ".llllllllllll.....d.....",
+  ".lllllllllllls....d....s",
+  ".llllllllllllss...d...ss",
+  ".llllllllllllsss..d..sss",
+  ".dddddddddddd.ssssdssss.",
+  ".dddddddddddd...ssdss...",
+  ".dddddddddddd.....d....."
+}
 local BACK_W = 80
 
 local function load(rows)
@@ -409,8 +441,8 @@ local function load(rows)
   return rows
 end
 local img = {
-  token = {load(TOKEN_A), load(TOKEN_B), load(TOKEN_C), load(TOKEN_B)},
-  player = load(PLAYER), moon = load(MOON), cloud = load(CLOUD), ramp = load(RAMP), flag = load(FLAG),
+  token = {load(TOKEN_A), load(TOKEN_B)},
+  moon = load(MOON), cloud = load(CLOUD), ramp = load(RAMP),
   skins = {}, sticks = {}, back = {}, mapIcon = {},
 }
 for i, skin in ipairs(SKINS) do
@@ -432,7 +464,12 @@ ui.bg("bg")
 local cv = ui.canvas(0, 0, CW, CH, {scale = SCALE, color = "bg"})
 local lblTop   = ui.label(4, 2, "", {size = 12, color = "dim"})
 local lblWind  = ui.label(0, 2, "", {size = 12, color = "text", w = ui.W - 4, align = "right"})
-local lblDist  = ui.label(0, 150, "", {size = 20, color = "text", w = ui.W, align = "center"})
+local lblShotsTitle = ui.label(0, 151, "", {size = 12, color = "dim", w = ui.W, align = "center"})
+local lblKick = {
+  ui.label(0, 170, "", {size = 20, color = "purple", w = 106, align = "center"}),
+  ui.label(107, 170, "", {size = 20, color = "purple", w = 106, align = "center"}),
+  ui.label(214, 170, "", {size = 20, color = "purple", w = 106, align = "center"}),
+}
 local lblMsg   = ui.label(0, 60, "", {size = 20, color = "green", w = ui.W, align = "center"})
 local lblSub   = ui.label(0, 88, "", {size = 14, color = "dim", w = ui.W, align = "center"})
 local lblTitle = ui.label(0, 4, "", {size = 32, color = "text", w = ui.W, align = "center"})
@@ -467,7 +504,7 @@ local previewT = 0
 
 local S = {}          -- game state
 _S = S                -- exposed for the headless harness (sim.py)
-local clouds, ramps, flags = {}, {}, {}
+local clouds, ramps = {}, {}
 local msgTimer = 0
 
 if SEED then math.randomseed(SEED) else pcall(math.randomseed) end
@@ -520,14 +557,13 @@ local function showStick()
 end
 
 local function setupWorld()
-  clouds, ramps, flags = {}, {}, {}
+  clouds, ramps = {}, {}
   for i = 1, 12 do clouds[i] = {x = rnd(0, 1300), y = rnd(3, 20), spd = rnd(0.25, 0.5)} end
   local x = 120
   while x < 1200 do
     x = x + rnd(170, 320)
     ramps[#ramps + 1] = x
   end
-  for _, m in ipairs({100, 250, 500, 750}) do flags[#flags + 1] = m end
 end
 
 local function showMap()
@@ -546,22 +582,31 @@ local function closeRanks()
   cv:show(true)
 end
 
+local function clearResults()
+  lblShotsTitle:text("")
+  for i = 1, SWINGS do lblKick[i]:text("") end
+end
+
 local function newRun()
   closeRanks()
+  clearResults()
   S.mode = "title"
   S.swing = 0
   S.total = 0
+  S.shots = {}
+  S.celebrate = 0
+  S.confetti = {}
   S.wind = 0
   S.flight = nil
   S.cam = 0
   S.swingAnim = 0
   S.tokenFrame = 0
-  S.stage = 1
   setupWorld()
   lblTitle:pos(0, 4); lblTitle:text("SOL TO THE MOON")
   playBg:show(true); lblPlay:text("SELECT  PLAY")
+  lblMsg:pos(0, 60); lblSub:pos(0, 88)
   lblMsg:text(""); lblSub:text(""); lblPop:text(""); popTimer = 0
-  lblDist:text("")
+  lblBest:text("")
   lblTop:text(""); lblWind:text("")
   lblMapTag:text("MAP"); lblHeroTag:text("CHARACTER")
   showStick()
@@ -575,10 +620,12 @@ end
 
 local function showRanks()
   closeRanks()
+  clearResults()
   S.mode = "ranks"
   playBg:show(false)
   lblMapTag:text(""); lblHeroTag:text(""); lblMap:text("")
   lblTitle:text(""); lblSkin:text(""); lblStick:text(""); lblBest:text(""); lblPlay:text("")
+  lblTop:text(""); lblWind:text(""); lblPop:text("")
   lblMsg:text(""); lblSub:text("")
   local items = {}
   for i = 1, RANKS do
@@ -592,9 +639,9 @@ end
 
 local function startSwing()
   S.swing = S.swing + 1
-  S.stage = math.min(S.swing, #STAGES)
   S.mode = "drop"
   S.map = mapIdx
+  clearResults()
   playBg:show(false)
   S.wind = fl(rnd(-6, 6) + 0.5)
   S.token = {x = BAT_X + 3, y = -8}
@@ -607,13 +654,13 @@ local function startSwing()
   S.swingAnim = 0
   S.flight = nil
   lblMapTag:text(""); lblHeroTag:text(""); lblMap:text("")
-  lblTitle:text(""); lblSkin:text(""); lblStick:text(""); lblBest:text(""); lblPlay:text(""); lblDist:text("")
-  lblTop:text("swing " .. S.swing .. "/" .. SWINGS .. "   total " .. fl(S.total) .. " m")
+  lblMsg:pos(0, 60); lblSub:pos(0, 88)
+  lblTitle:text(""); lblSkin:text(""); lblStick:text(""); lblBest:text(""); lblPlay:text("")
+  lblTop:text("")
   local w = S.wind
   local arrow = w > 0 and ">" or (w < 0 and "<" or "=")
-  lblWind:text("wind " .. arrow .. " " .. math.abs(w))
-  local st = STAGES[S.stage]
-  setMsg(st.name, st.sub, 1300, "text")
+  lblWind:text("WIND " .. arrow .. " " .. math.abs(w))
+  setMsg("KICK!", nil, 550, "green")
   if not bar then bar = ui.bar(60, 196, 200, 8, 0) end
   bar:set(0)
   ui.hint("hold SELECT: power   release: swing")
@@ -638,14 +685,25 @@ local function endRun()
   local isBest = total > best
   if isBest then best = total; storage.set("best", best) end
   local pos = addRank(total)
-  lblTitle:pos(0, 36); lblTitle:text(total .. " m")
-  lblDist:text("")
+  lblTop:text(MAPS[mapIdx].name .. " / " .. SKINS[skinIdx].name)
+  lblWind:text("")
+  lblTitle:pos(0, 50); lblTitle:text(total .. " m")
   if bar then bar:remove(); bar = nil end
-  local verdict = total >= AWARD_BIG and "LEGENDARY" or (total >= AWARD_MIN and "CONFIRMED" or "DROPPED")
-  local sub = isBest and "new best" or ("best " .. fl(best) .. " m")
-  if pos then sub = "rank #" .. pos .. "   " .. sub end
-  setMsg(verdict, sub, 99999, total >= AWARD_MIN and "green" or "pink")
-  if isBest and total > 0 then pop("BEST") end
+  local verdict = total >= AWARD_BIG and "MOONBOUND" or (total >= AWARD_MIN and "BRILLIANT" or "NICE KICKS")
+  local sub = isBest and "NEW PERSONAL BEST" or ("BEST " .. best .. " m")
+  if pos then sub = sub .. "   RANK #" .. pos end
+  lblMsg:pos(0, 20); lblSub:pos(0, 90)
+  setMsg(verdict, sub, 99999, "green")
+  lblPop:text(""); popTimer = 0
+  lblShotsTitle:text("KICK 1        KICK 2        KICK 3")
+  for i = 1, SWINGS do lblKick[i]:text((S.shots[i] or 0) .. " m") end
+  S.celebrate = 2.4
+  S.confetti = {}
+  local colors = {0x14F195, 0x9945FF, 0xDCC49D}
+  for i = 1, 16 do
+    S.confetti[i] = {x = (i * 23) % 78, y = -((i * 7) % 23), v = 10 + i % 4 * 4,
+      color = colors[i % 3 + 1]}
+  end
   ui.hint("SELECT again   UP ranks   CANCEL menu")
   if total >= AWARD_BIG then led.fill(0x99, 0x45, 0xFF) elseif total >= AWARD_MIN then led.fill(0x14, 0xF1, 0x95) else led.off() end
 
@@ -662,6 +720,7 @@ local function endRun()
 end
 
 local function hit()
+  if bar then bar:remove(); bar = nil end
   local st = STICKS[stickIdx]
   local dy = S.token.y + 4 - HIT_Y     -- negative: early (token still high)
   local ady = math.abs(dy)
@@ -712,6 +771,7 @@ local function tickDrop(dt)
     return
   end
   if t.y > GROUND then
+    if bar then bar:remove(); bar = nil end
     S.mode = "miss"; S.missT = 0
     setMsg("MISS", "release to swing", 900, "pink"); pop("MISS")
   end
@@ -753,14 +813,14 @@ local function tickFlight(dt)
     end
   end
   if f.stopped and f.rest > 0.6 then
-    S.total = S.total + math.max(0, f.x)
+    local score = math.max(0, fl(f.x))
+    S.shots[S.swing] = score
+    S.total = S.total + score
     if f.x >= MOON_X then setMsg("TO THE MOON", nil, 1400, "purple"); pop("MOON"); led.fill(0x99, 0x45, 0xFF)
     elseif f.x < 60 then pop("FLAT") end
     S.mode = "result"; S.resultT = 0
     finishFirstStage()
-    lblTop:text("swing " .. S.swing .. "/" .. SWINGS .. "   total " .. fl(S.total) .. " m")
   end
-  lblDist:text(string.format("%d m", math.max(0, fl(f.x))))
   if not f.stopped then
     table.insert(S.trail, 1, {x = f.x, y = f.y})
     if #S.trail > 6 then table.remove(S.trail) end
@@ -781,6 +841,16 @@ local function draw()
     cv:image(img.skins[skinIdx].face, 52, 16 + fl(previewT * 5) % 2)
     return
   end
+  if S.mode == "end" then
+    cv:clear("bg")
+    for i = 1, SWINGS do cv:image(img.token[1], 8 + (i - 1) * 27, 27) end
+    if S.celebrate > 0 then
+      for _, p in ipairs(S.confetti) do
+        if p.y >= 0 and p.y < 51 then cv:rect(fl(p.x), fl(p.y), 2, 1, p.color) end
+      end
+    end
+    return
+  end
   cv:clear(map.sky)
   local cam = S.cam or 0
   -- moon (parallax 0.5)
@@ -799,18 +869,21 @@ local function draw()
   -- subdued foreground keeps characters and flying token readable
   cv:rect(0, GROUND, CW, CH - GROUND, map.ground)
   cv:line(0, GROUND, CW - 1, GROUND, map.s)
-  local first = fl(cam / 50) * 50
-  for m = first, first + CW + 50, 50 do
-    local x = m - cam
-    if x >= 0 and x < CW then cv:line(fl(x), GROUND + 1, fl(x), GROUND + (m % 100 == 0 and 3 or 1), 0x6B6B80) end
+  -- Three pictorial kicks; no live metre counter or distance markers.
+  for i = 1, SWINGS do
+    local color = i < S.swing and 0x9945FF or (i == S.swing and 0x14F195 or map.s)
+    cv:rect(3 + (i - 1) * 7, 2, 5, 3, color)
+  end
+  -- Wind streaks drift in the actual wind direction and speed.
+  if S.wind ~= 0 then
+    for i = 1, 4 do
+      local x = (i * 19 + fl(S.tokenFrame * S.wind * 0.7)) % CW
+      cv:line(x, 8 + i * 4, math.min(CW - 1, x + 2 + math.abs(S.wind)), 8 + i * 4, map.s)
+    end
   end
   for _, rx in ipairs(ramps) do
     local x = rx - cam
     if x > -6 and x < CW then cv:image(img.ramp, fl(x) - 3, GROUND - 3) end
-  end
-  for _, fx in ipairs(flags) do
-    local x = fx - cam
-    if x > -3 and x < CW then cv:image(img.flag, fl(x), GROUND - 5) end
   end
   -- player + stick (world x 0)
   local px = BAT_X - 6 - cam
@@ -822,19 +895,17 @@ local function draw()
   if S.mode == "drop" then
     cv:line(BAT_X - 1, HIT_Y, BAT_X + 9, HIT_Y, 0x3B2F70)
     local t = S.token
-    cv:image(img.token[fl(S.tokenFrame) % 4 + 1], fl(t.x), fl(t.y))
+    cv:image(img.token[fl(S.tokenFrame) % 2 + 1], fl(t.x), fl(t.y))
   elseif S.mode == "flight" or S.mode == "result" then
     local f = S.flight
     for i = 2, #S.trail, 2 do
       local tr = S.trail[i]
       cv:pixel(fl(BAT_X + 6 + tr.x - cam), fl(GROUND - 5 - tr.y), i < 4 and 0xFFF7B0 or 0x6B6B80)
     end
-    cv:image(img.token[fl(S.tokenFrame) % 4 + 1], fl(BAT_X + 3 + f.x - cam), fl(GROUND - 8 - f.y))
+    cv:image(img.token[fl(S.tokenFrame) % 2 + 1], fl(BAT_X + 3 + f.x - cam), fl(GROUND - 8 - f.y))
   elseif S.mode == "miss" then
     local t = S.token
     cv:image(img.token[1], fl(t.x), fl(math.min(t.y, GROUND - 7)))
-  elseif S.mode == "end" then
-    cv:image(img.token[fl(S.tokenFrame) % 4 + 1], CW - 12, 1)
   end
 end
 
@@ -853,12 +924,17 @@ function on_tick(ms)
     if popY < 20 then popY = math.min(20, popY + ms * 0.12); lblPop:pos(0, fl(popY)) end
     if popTimer <= 0 then lblPop:text("") end
   end
+  if S.mode == "end" and S.celebrate > 0 then
+    S.celebrate = math.max(0, S.celebrate - dt)
+    for _, p in ipairs(S.confetti) do p.y = p.y + p.v * dt end
+  end
   if S.mode == "drop" then tickDrop(dt)
   elseif S.mode == "flight" then tickFlight(dt)
   elseif S.mode == "miss" then
     S.missT = S.missT + dt
     if S.token.y < GROUND - 7 then S.token.y = S.token.y + DROP_SPEED * dt end
     if S.missT > 0.85 then
+      S.shots[S.swing] = 0
       finishFirstStage()
       if S.swing >= SWINGS then endRun() else startSwing() end
     end
@@ -894,7 +970,7 @@ function on_key(k, rep)
     elseif k == "select" then
       if not SKINS[skinIdx].unlocked then ui.toast("Clear stage 1 to unlock"); return true end
       if not stickUnlocked(stickIdx) then ui.toast("Locked: reach " .. STICKS[stickIdx].unlock .. " m"); return true end
-      S.total = 0; S.swing = 0
+      S.total = 0; S.swing = 0; S.shots = {}; S.celebrate = 0
       lblMsg:text(""); lblSub:text(""); msgTimer = 0
       startSwing()
     end
@@ -903,7 +979,7 @@ function on_key(k, rep)
   if S.mode == "end" then
     if k == "up" then showRanks()
     elseif k == "select" then
-      S.total = 0; S.swing = 0
+      S.total = 0; S.swing = 0; S.shots = {}; S.celebrate = 0
       lblMsg:text(""); lblSub:text(""); msgTimer = 0
       startSwing()
     end
