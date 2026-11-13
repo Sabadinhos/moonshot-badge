@@ -560,6 +560,8 @@ local function modal(mode, from)
   S.mode = mode
   S.quitFrom = from
   modalT = 0
+  -- Clear the play message so it cannot sit on top of the modal panel.
+  lblMsg:text(""); lblSub:text(""); msgTimer = 0
   modalTitle:text(mode == "pause" and "PAUSED" or "QUIT GAME?")
   modalHelp:text(mode == "pause" and "SELECT RESUME   v MENU   > QUIT" or "SELECT STAY   RIGHT EXIT")
   showModal(true)

@@ -6,9 +6,17 @@
 
 Pick a character. Hold SELECT to drop the coin and charge. Release near the bat. Send it flying across Westminster, Tower Bridge, Covent Garden or Olympia.
 
-![Menu art study showing all four map and character choices in light and dark themes](shots/menu_final_study.png)
+## Gameplay
 
-*Original game-art studies, not photos or captures from the physical badge.*
+| Pick your run | Kick |
+| --- | --- |
+| ![Menu: cycling the four London maps and the character roster](shots/gifs/01_menu.gif) | ![One kick: drop, charge, hit and the coin flying across Westminster](shots/gifs/02_kick.gif) |
+
+| Three kicks and the score | CANCEL pauses, never drops you out |
+| --- | --- |
+| ![A full three-kick run ending on the result screen](shots/gifs/03_full_run.gif) | ![CANCEL freezes play and asks before quitting](shots/gifs/04_pause.gif) |
+
+*Rendered from the app's own draw calls with `make_gifs.py`. Simulator renders, not captures from the physical badge; fonts and colour on the badge screen will differ.*
 
 **3 kicks** per run · **4 London maps** · **nearby best scores** over badge mesh
 
@@ -22,7 +30,7 @@ Pick a character. Hold SELECT to drop the coin and charge. Release near the bat.
 - **Menu:** LEFT/RIGHT map, UP/DOWN character, SELECT play.
 - **Kick:** after the short intro, release SELECT once. Press and hold it again to start the drop and charge, then release near the bat. CANCEL pauses play and quitting asks for confirmation. The OS HOME key cannot be intercepted.
 - **Results:** DOWN selects the next bat, UP shows nearby ranks, SELECT replays. Ranks are self-reported by nearby badges running this app: not Yearbook, not a global or verified-friends leaderboard.
-- **App:** `soltothemoon` v1.1.0 · Lua 5.5 · Solana OS · ESP32-C5. Upload `main.lua` and `app.json` only, or the matching local `dist/` ZIP. Run the emulator and the USB badge test before publishing.
-- **Validation:** headless Lua simulations cover controls, game flow, rewards and physics (`python sim.py`, `sim_controls.py`, `sim_final_controls.py`, `sim_rewards.py`, `sim_transition.py`, `calib.py 10`). Physical badge, two-badge mesh and App Store publication remain unverified.
+- **App:** `soltothemoon` v1.1.1 · Lua 5.5 · Solana OS · ESP32-C5. Upload `main.lua` and `app.json` only, or the matching local `dist/` ZIP. Run the emulator and the USB badge test before publishing.
+- **Validation:** headless Lua simulations cover controls, game flow, rewards, identity and physics (`python sim.py`, `sim_controls.py`, `sim_final_controls.py`, `sim_rewards.py`, `sim_transition.py`, `sim_identity.py`, `calib.py 10`). `sim_render.py` rasterises the same draw calls for the GIFs above. Physical badge, two-badge mesh and App Store publication remain unverified.
 
 </details>
