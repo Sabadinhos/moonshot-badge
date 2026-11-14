@@ -549,7 +549,73 @@ local POPS = {
   MAX = {"MAX PUMP", "lime"}, COMBO2 = {"COMBO x2", "yellow"}, COMBO3 = {"COMBO x3", "purple"},
   M100 = {"100 M", "lime"}, M200 = {"200 M", "green"}, M300 = {"300 M", "yellow"},
   LAMP1 = {"+1 !LAMP TIER", "green"}, LAMP5 = {"5 !LAMP TIER", "purple"},
+  QUEST = {"QUEST DONE", "yellow"}, CLEAR = {"DAILY CLEAR", "purple"}, FIRE = {"STREAK ON", "lime"},
 }
+
+------------------------------------------------------------------ daily layer
+-- Everything below is local to this badge: a daily map with the same winds on
+-- every badge, three daily quests, a day streak and today's best. No rewards.
+local QUESTS = {
+  {id = "combo", text = "2 PERFECTs in a row"},
+  {id = "far",   text = "one kick past 300 m"},
+  {id = "ramp",  text = "hit a RAMP"},
+  {id = "moon",  text = "send one TO THE MOON"},
+  {id = "tier",  text = "800 m in one run"},
+  {id = "daily", text = "play the DAILY map"},
+  {id = "three", text = "3 PERFECTs in one run"},
+  {id = "runs",  text = "finish 3 runs"},
+}
+local function today() local t = sys.time and sys.time(); return t and fl(t / 86400) or nil end
+local daily = storage.get("daily") or {}
+local streak = storage.get("streak") or {last = -10, n = 0}
+
+local function dailyState()
+  local d = today(); if not d then return nil end
+  if daily.day ~= d then
+    daily = {day = d, best = 0, runs = 0, done = {}, q = {}}
+    local k = d * 7
+    while #daily.q < 3 do
+      local id = QUESTS[k % #QUESTS + 1].id
+      local dup = false
+      for _, x in ipairs(daily.q) do if x == id then dup = true end end
+      if not dup then daily.q[#daily.q + 1] = id end
+      k = k + 3
+    end
+    storage.set("daily", daily)
+  end
+  return daily
+end
+local function dailyMap() local d = today(); return d and (d % #MAPS + 1) or nil end
+local function questText(id) for _, q in ipairs(QUESTS) do if q.id == id then return q.text end end return id end
+local function questsDone()
+  local st = dailyState(); if not st then return 0, 0 end
+  local n = 0
+  for _, id in ipairs(st.q) do if st.done[id] then n = n + 1 end end
+  return n, #st.q
+end
+local function nextQuest()
+  local st = dailyState(); if not st then return nil end
+  for _, id in ipairs(st.q) do if not st.done[id] then return "QUEST  " .. questText(id) end end
+  return "DAILY CLEAR  come back tomorrow"
+end
+local function streakNow()
+  local d = today(); if not d then return 0 end
+  if streak.last == d or streak.last == d - 1 then return streak.n end
+  return 0
+end
+local questPop -- set after pop() exists
+local function quest(id)
+  local st = dailyState(); if not st or st.done[id] then return end
+  local wanted = false
+  for _, x in ipairs(st.q) do if x == id then wanted = true end end
+  if not wanted then return end
+  st.done[id] = true
+  storage.set("daily", st)
+  local n, total = questsDone()
+  if questPop then questPop(n == total and "CLEAR" or "QUEST") end
+end
+
+_DAILY = {state = function() return dailyState() end, map = dailyMap, done = function() return questsDone() end, quest = function(id) quest(id) end}
 
 -- Micro-incentives: what the next reward tier needs, said between kicks.
 local function tierLine(total)
@@ -563,6 +629,7 @@ local function pop(kind)
   popY = 8; lblPop:pos(0, popY)
   popTimer = 450
 end
+questPop = function(kind) pop(kind); if kind == "CLEAR" then led.fill(0x99, 0x45, 0xFF) end end
 
 local function playerName()
   local o = badge and badge.owner and badge.owner()
@@ -631,6 +698,7 @@ end
 
 local function showMap()
   lblMap:text("< " .. MAPS[mapIdx].name .. " >")
+  if S.mode == "title" then lblMapTag:text(mapIdx == dailyMap() and "DAILY MAP" or "MAP"); lblMapTag:color(mapIdx == dailyMap() and "lime" or "dim") end
 end
 
 local function showSkin()
@@ -676,6 +744,13 @@ local function newRun()
   showStick()
   showMap()
   showSkin()
+  if dailyState() then
+    local n, t = questsDone()
+    local line = "QUESTS " .. n .. "/" .. t
+    if streakNow() > 0 then line = "STREAK " .. streakNow() .. "   " .. line end
+    if daily.best > 0 then line = line .. "   TODAY " .. daily.best .. " m" end
+    lblStick:text(line); lblStick:color(n == t and "purple" or "lime")
+  end
   previewT = 0
   ui.hint("<> map   UP/DN hero   SELECT play")
   if bar then bar:remove(); bar = nil end
@@ -739,7 +814,9 @@ local function startSwing()
   S.charging = false
   S.chargeT = 0
   S.milestone = 0
-  if S.swing == 1 then S.streak = 0 end
+  if S.swing == 1 then S.streak = 0; S.runPerfects = 0 end
+  local d = today()
+  if d and mapIdx == dailyMap() then S.wind = (d * 131 + S.swing * 977) % 13 - 6 end
   S.cam = 0
   S.swingAnim = 0
   S.flight = nil
@@ -750,7 +827,7 @@ local function startSwing()
   local w = S.wind
   local arrow = w > 0 and ">" or (w < 0 and "<" or "=")
   lblWind:text("WIND " .. arrow .. " " .. math.abs(w))
-  setMsg("GET READY", nil, 550, "green")
+  setMsg("GET READY", S.swing == 1 and nextQuest() or nil, S.swing == 1 and 900 or 550, "green")
   if not bar then bar = ui.bar(60, 196, 200, 8, 0) end
   bar:set(0)
   ui.hint("release SELECT, then press + hold")
@@ -782,6 +859,20 @@ local function endRun()
   useCanvas(false)
   local total = fl(S.total)
   local isBest = total > best
+  local st = dailyState()
+  if st then
+    local d = st.day
+    if streak.last ~= d then
+      streak = {last = d, n = (streak.last == d - 1) and streak.n + 1 or 1}
+      storage.set("streak", streak)
+    end
+    st.runs = st.runs + 1
+    if total > st.best then st.best = total end
+    storage.set("daily", st)
+    if total >= AWARD_BIG then quest("tier") end
+    if st.runs >= 3 then quest("runs") end
+    if mapIdx == dailyMap() then quest("daily") end
+  end
   if isBest then best = total; storage.set("best", best) end
   shareBest()
   local pos = addRank(total)
@@ -806,7 +897,12 @@ local function endRun()
     S.confetti[i] = {x = (i * 23) % 78, y = -((i * 7) % 23), v = 10 + i % 4 * 4,
       color = colors[i % 3 + 1]}
   end
-  lblBest:pos(0, 191); lblBest:text("NEXT BAT  " .. STICKS[stickIdx].name)
+  lblBest:pos(0, 191)
+  if st then
+    local n, t = questsDone()
+    lblBest:text("QUESTS " .. n .. "/" .. t .. "   STREAK " .. streakNow() .. "   TODAY " .. st.best .. " m")
+    lblBest:color(n == t and "purple" or "lime")
+  else lblBest:text("NEXT BAT  " .. STICKS[stickIdx].name) end
   ui.hint("DOWN bat   UP ranks   SELECT again")
   if total >= AWARD_BIG then led.fill(0x99, 0x45, 0xFF) elseif total >= AWARD_MIN then led.fill(0x14, 0xF1, 0x95) else led.off() end
 
@@ -874,12 +970,14 @@ local function hit()
   S.flight = {x = 0, y = 0, vx = v0 * math.cos(rad), vy = v0 * math.sin(rad), boosted = {}, rest = 0, stopped = false}
   S.mode = "flight"
   S.swingAnim = 1
-  if verdict == "PERFECT" then S.streak = (S.streak or 0) + 1 else S.streak = 0 end
+  if verdict == "PERFECT" then S.streak = (S.streak or 0) + 1; S.runPerfects = (S.runPerfects or 0) + 1 else S.streak = 0 end
   local popKind = verdict
   if S.streak >= 3 then popKind = "COMBO3" elseif S.streak == 2 then popKind = "COMBO2"
   elseif S.power >= 95 then popKind = "MAX" end
   setMsg(verdict, string.format("power %d", fl(S.power)), 800, color or "text")
   pop(popKind)
+  if S.streak >= 2 then quest("combo") end
+  if (S.runPerfects or 0) >= 3 then quest("three") end
   if verdict == "PERFECT" then led.fill(0x14, 0xF1, 0x95) else led.off() end
 end
 
@@ -927,7 +1025,7 @@ local function tickFlight(dt)
           f.vy = math.abs(f.vy) * 1.05 + 7
           f.vx = f.vx * 1.08 + 2
           boosted = true
-          setMsg("RAMP", "boost", 600, "lime"); pop("RAMP")
+          setMsg("RAMP", "boost", 600, "lime"); pop("RAMP"); quest("ramp")
           led.fill(0xDC, 0xFF, 0x4A)
           break
         end
@@ -951,6 +1049,8 @@ local function tickFlight(dt)
     if f.x >= MOON_X then setMsg("TO THE MOON", nil, 1400, "purple"); pop("MOON"); led.fill(0x99, 0x45, 0xFF)
     elseif f.x < 60 then pop("FLAT") end
     local before = S.total - score
+    if score >= 300 then quest("far") end
+    if f.x >= MOON_X then quest("moon") end
     if before < AWARD_BIG and S.total >= AWARD_BIG then pop("LAMP5"); led.fill(0x99, 0x45, 0xFF)
     elseif before < AWARD_MIN and S.total >= AWARD_MIN then pop("LAMP1") end
     if f.x < MOON_X and S.swing < SWINGS then setMsg(score .. " m", tierLine(fl(S.total)), 950, "text") end

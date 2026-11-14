@@ -6,6 +6,12 @@
 
 Pick a character. Hold SELECT to drop the coin and charge. Release near the bat. Send it flying across Westminster, Tower Bridge, Covent Garden or Olympia.
 
+## Every day
+
+![Daily layer](shots/daily_study.png)
+
+A new **Daily Map** with the same winds on every badge. Three daily quests. A day streak. Today's best. Resets at UTC midnight, no rewards attached.
+
 ## Gameplay
 
 | Pick your run | Kick |
@@ -30,7 +36,7 @@ Pick a character. Hold SELECT to drop the coin and charge. Release near the bat.
 - **Menu:** LEFT/RIGHT map, UP/DOWN character, SELECT play.
 - **Kick:** after the short intro, release SELECT once. Press and hold it again to start the drop and charge, then release near the bat. CANCEL pauses play and quitting asks for confirmation. The OS HOME key cannot be intercepted.
 - **Results:** DOWN selects the next bat, UP shows nearby ranks, SELECT replays. Ranks are self-reported by nearby badges running this app: not Yearbook, not a global or verified-friends leaderboard.
-- **App:** `soltothemoon` v1.2.0 · Lua 5.5 · Solana OS · ESP32-C5. Upload `main.lua` and `app.json` only, or the matching local `dist/` ZIP. Run the emulator and the USB badge test before publishing.
-- **Validation:** headless Lua simulations cover controls, game flow, rewards, identity and physics (`python sim.py`, `sim_controls.py`, `sim_final_controls.py`, `sim_rewards.py`, `sim_transition.py`, `sim_identity.py`, `sim_balance.py`, `sim_easy.py`, `calib.py 10`). `sim_render.py` rasterises the same draw calls for the GIFs above. Physical badge, two-badge mesh and App Store publication remain unverified.
+- **App:** `soltothemoon` v1.3.0 · Lua 5.5 · Solana OS · ESP32-C5. Upload `main.lua` and `app.json` only, or the matching local `dist/` ZIP. Run the emulator and the USB badge test before publishing.
+- **Validation:** headless Lua simulations cover controls, game flow, rewards, identity and physics (`python sim.py`, `sim_controls.py`, `sim_final_controls.py`, `sim_rewards.py`, `sim_transition.py`, `sim_identity.py`, `sim_balance.py`, `sim_easy.py`, `sim_daily.py`, `calib.py 10`). `sim_render.py` rasterises the same draw calls for the GIFs above. Physical badge, two-badge mesh and App Store publication remain unverified.
 
 </details>
